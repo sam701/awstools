@@ -7,7 +7,7 @@ import (
 	"github.com/codegangsta/cli"
 )
 
-var theConfig *config
+var theConfig *configuration
 
 func main() {
 	app := cli.NewApp()
@@ -17,7 +17,7 @@ func main() {
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "config, c",
-			Usage: "path to config.toml file",
+			Usage: "path to config.toml file (default: ~/.config/awstools/config.toml)",
 		},
 	}
 	app.Commands = []cli.Command{

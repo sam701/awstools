@@ -7,8 +7,9 @@ import (
 	"log"
 	"os"
 	"path"
-	"sam701/awstools/cred"
 	"strings"
+
+	"github.com/sam701/awstools/cred"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -85,7 +86,7 @@ var userName string
 
 func getUserName() string {
 	if userName == "" {
-		client := iam.New(newSession(theConfig.Bastion))
+		client := iam.New(newSession(theConfig.Profiles.Bastion))
 		data, err := client.GetUser(&iam.GetUserInput{})
 		if err != nil {
 			log.Fatalln("ERROR:", err)
@@ -104,11 +105,11 @@ func readMfaToken() string {
 
 func getBastionSessionToken() {
 	token := readMfaToken()
-	session := newSession(theConfig.Bastion)
+	session := newSession(theConfig.Profiles.Bastion)
 	stsClient := sts.New(session)
 	data, err := stsClient.GetSessionToken(&sts.GetSessionTokenInput{
 		SerialNumber: aws.String(fmt.Sprintf("arn:aws:iam::%s:mfa/%s",
-			accountId(theConfig.Bastion),
+			accountId(theConfig.Profiles.Bastion),
 			getUserName())),
 		TokenCode: aws.String(token),
 	})
@@ -116,7 +117,7 @@ func getBastionSessionToken() {
 		log.Fatalln("ERROR:", err)
 	}
 
-	persistSharedCredentials(data.Credentials, theConfig.BastionMfa)
+	persistSharedCredentials(data.Credentials, theConfig.Profiles.BastionMfa)
 }
 
 func newSession(name string) *session.Session {
@@ -135,7 +136,7 @@ func accountId(accountName string) string {
 }
 
 func tryToAssumeRole(accountName, role string) error {
-	session := newSession(theConfig.BastionMfa)
+	session := newSession(theConfig.Profiles.BastionMfa)
 	accountId := accountId(accountName)
 
 	stsClient := sts.New(session)

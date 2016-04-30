@@ -8,14 +8,16 @@ import (
 	"github.com/naoina/toml"
 )
 
-type config struct {
-	Bastion       string
-	BastionMfa    string
+type configuration struct {
+	Profiles struct {
+		Bastion    string
+		BastionMfa string
+	}
 	DefaultRegion string
 	Accounts      map[string]string
 }
 
-func readConfig(filePath string) *config {
+func readConfig(filePath string) *configuration {
 	if filePath == "" {
 		filePath = path.Join(os.Getenv("HOME"), ".config", "awstools", "config.toml")
 	}
@@ -25,7 +27,7 @@ func readConfig(filePath string) *config {
 	}
 	defer f.Close()
 
-	var c config
+	var c configuration
 	err = toml.NewDecoder(f).Decode(&c)
 	if err != nil {
 		log.Fatalln("ERROR", err)

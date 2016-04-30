@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"sam701/awstools/cred"
+
+	"github.com/sam701/awstools/cred"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/iam"
@@ -11,7 +12,7 @@ import (
 )
 
 func rotateBastionKey(*cli.Context) {
-	client := iam.New(newSession(theConfig.Bastion))
+	client := iam.New(newSession(theConfig.Profiles.Bastion))
 	key, err := client.CreateAccessKey(&iam.CreateAccessKeyInput{
 		UserName: aws.String(getUserName()),
 	})
@@ -19,8 +20,8 @@ func rotateBastionKey(*cli.Context) {
 		log.Fatalln("ERROR", err)
 	}
 
-	currentAccessKeyId := cred.GetBastionKeyId(theConfig.Bastion)
-	cred.SaveCredentials(theConfig.Bastion, *key.AccessKey.AccessKeyId, *key.AccessKey.SecretAccessKey, "")
+	currentAccessKeyId := cred.GetBastionKeyId(theConfig.Profiles.Bastion)
+	cred.SaveCredentials(theConfig.Profiles.Bastion, *key.AccessKey.AccessKeyId, *key.AccessKey.SecretAccessKey, "")
 	fmt.Println("Created new access key")
 
 	_, err = client.DeleteAccessKey(&iam.DeleteAccessKeyInput{
