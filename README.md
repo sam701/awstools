@@ -6,6 +6,18 @@ A few helpful AWS tools.
 * `ec2` - searches EC2 instances by pattern.
 * `rotate-bastion-key` - rotates the bastion key
 
+## Setup
+Export reqired environment variables:
+```
+export GOPATH=$HOME/goprojects
+export PATH=$PATH:$GOPATH/bin
+```
+
+Install `awstools`:
+```
+go get -u github.com/sam701/awstools
+```
+
 ## Configuration
 The default path to the configuration file is `$HOME/.config/awstools/config.toml`.
 
