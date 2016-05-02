@@ -11,7 +11,7 @@ import (
 	"github.com/codegangsta/cli"
 )
 
-func rotateBastionKey(*cli.Context) {
+func rotateBastionKey(*cli.Context) error {
 	client := iam.New(newSession(theConfig.Profiles.Bastion))
 	key, err := client.CreateAccessKey(&iam.CreateAccessKeyInput{
 		UserName: aws.String(getUserName()),
@@ -32,4 +32,6 @@ func rotateBastionKey(*cli.Context) {
 		log.Fatalln("ERROR", err)
 	}
 	fmt.Println("Deleted old access key")
+
+	return nil
 }

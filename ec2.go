@@ -13,13 +13,14 @@ import (
 	"github.com/codegangsta/cli"
 )
 
-func actionDescribeEC2(c *cli.Context) {
+func actionDescribeEC2(c *cli.Context) error {
 	searchPattern := c.Args().First()
 	if searchPattern == "" {
 		cli.ShowCommandHelp(c, "ec2")
 	} else {
 		printInstanceStatus(searchPattern)
 	}
+	return nil
 }
 
 func printInstanceStatus(searchPattern string) {

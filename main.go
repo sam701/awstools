@@ -59,8 +59,9 @@ func main() {
 	app.Run(os.Args)
 }
 
-func actionPrintKnownAccounts(c *cli.Context) {
+func actionPrintKnownAccounts(c *cli.Context) error {
 	for name, accountId := range theConfig.Accounts {
 		fmt.Println(name, "=", accountId)
 	}
+	return nil
 }

@@ -21,7 +21,7 @@ import (
 
 var scriptOutput io.Writer = os.Stdout
 
-func actionAssumeRole(c *cli.Context) {
+func actionAssumeRole(c *cli.Context) error {
 	if len(c.Args()) == 2 {
 		var account, role string
 		account = c.Args().Get(0)
@@ -39,6 +39,7 @@ func actionAssumeRole(c *cli.Context) {
 	} else {
 		cli.ShowCommandHelp(c, "assume")
 	}
+	return nil
 }
 
 func assumeRole(account, role string) {
