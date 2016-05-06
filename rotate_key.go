@@ -11,8 +11,8 @@ import (
 	"github.com/codegangsta/cli"
 )
 
-func rotateBastionKey(*cli.Context) error {
-	client := iam.New(newSession(theConfig.Profiles.Bastion))
+func rotateMainAccountKey(*cli.Context) error {
+	client := iam.New(newSession(theConfig.Profiles.MainAccount))
 	key, err := client.CreateAccessKey(&iam.CreateAccessKeyInput{
 		UserName: aws.String(getUserName()),
 	})
@@ -20,8 +20,8 @@ func rotateBastionKey(*cli.Context) error {
 		log.Fatalln("ERROR", err)
 	}
 
-	currentAccessKeyId := cred.GetBastionKeyId(theConfig.Profiles.Bastion)
-	cred.SaveCredentials(theConfig.Profiles.Bastion, *key.AccessKey.AccessKeyId, *key.AccessKey.SecretAccessKey, "")
+	currentAccessKeyId := cred.GetMainAccountKeyId(theConfig.Profiles.MainAccount)
+	cred.SaveCredentials(theConfig.Profiles.MainAccount, *key.AccessKey.AccessKeyId, *key.AccessKey.SecretAccessKey, "")
 	fmt.Println("Created new access key")
 
 	_, err = client.DeleteAccessKey(&iam.DeleteAccessKeyInput{

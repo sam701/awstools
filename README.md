@@ -2,9 +2,9 @@
 A few helpful AWS tools.
 
 ## Tools
-* `assume` - assumes a role on a subaccount behind a bastion.
+* `assume` - assumes a role on a subaccount behind the main account where you have an access key.
 * `ec2` - searches EC2 instances by pattern.
-* `rotate-bastion-key` - rotates the bastion key
+* `rotate-main-account-key` - rotates the main account key
 
 ## Setup
 Export reqired environment variables:
@@ -40,8 +40,8 @@ Here is an example of a `config.toml`:
 defaultRegion = "eu-west-1"
 
 [profiles]
-bastion = "bastion_account"
-bastionMfa = "bastion_mfa"
+mainAccount = "main_account"
+mainAccountMfaSession = "main_account_mfa_session"
 
 [accounts]
 main = "000000000001"

@@ -46,10 +46,10 @@ func main() {
 			Action:    actionDescribeEC2,
 		},
 		{
-			Name:    "rotate-bastion-key",
+			Name:    "rotate-main-account-key",
 			Aliases: []string{"r"},
-			Usage:   "create a new bastion access key and delete the current one",
-			Action:  rotateBastionKey,
+			Usage:   "create a new access key for main account and delete the current one",
+			Action:  rotateMainAccountKey,
 		},
 	}
 	app.Before = func(c *cli.Context) error {

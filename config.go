@@ -10,8 +10,8 @@ import (
 
 type configuration struct {
 	Profiles struct {
-		Bastion    string
-		BastionMfa string
+		MainAccount           string
+		MainAccountMfaSession string
 	}
 	DefaultRegion string
 	Accounts      map[string]string

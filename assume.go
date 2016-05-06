@@ -48,7 +48,7 @@ func assumeRole(account, role string) {
 
 	err := tryToAssumeRole(account, role)
 	if err != nil {
-		getBastionSessionToken()
+		getMainAccountMfaSessionToken()
 		err = tryToAssumeRole(account, role)
 		if err != nil {
 			log.Fatalln(err)
@@ -87,7 +87,7 @@ var userName string
 
 func getUserName() string {
 	if userName == "" {
-		client := iam.New(newSession(theConfig.Profiles.Bastion))
+		client := iam.New(newSession(theConfig.Profiles.MainAccount))
 		data, err := client.GetUser(&iam.GetUserInput{})
 		if err != nil {
 			log.Fatalln("ERROR:", err)
@@ -104,13 +104,13 @@ func readMfaToken() string {
 	return scanner.Text()
 }
 
-func getBastionSessionToken() {
+func getMainAccountMfaSessionToken() {
 	token := readMfaToken()
-	session := newSession(theConfig.Profiles.Bastion)
+	session := newSession(theConfig.Profiles.MainAccount)
 	stsClient := sts.New(session)
 	data, err := stsClient.GetSessionToken(&sts.GetSessionTokenInput{
 		SerialNumber: aws.String(fmt.Sprintf("arn:aws:iam::%s:mfa/%s",
-			accountId(theConfig.Profiles.Bastion),
+			accountId(theConfig.Profiles.MainAccount),
 			getUserName())),
 		TokenCode: aws.String(token),
 	})
@@ -118,7 +118,7 @@ func getBastionSessionToken() {
 		log.Fatalln("ERROR:", err)
 	}
 
-	persistSharedCredentials(data.Credentials, theConfig.Profiles.BastionMfa)
+	persistSharedCredentials(data.Credentials, theConfig.Profiles.MainAccountMfaSession)
 }
 
 func newSession(name string) *session.Session {
@@ -137,7 +137,7 @@ func accountId(accountName string) string {
 }
 
 func tryToAssumeRole(accountName, role string) error {
-	session := newSession(theConfig.Profiles.BastionMfa)
+	session := newSession(theConfig.Profiles.MainAccountMfaSession)
 	accountId := accountId(accountName)
 
 	stsClient := sts.New(session)

@@ -101,7 +101,7 @@ func readCredentials(r io.Reader) *credentialsFile {
 	return cf
 }
 
-func GetBastionKeyId(profileName string) string {
+func GetMainAccountKeyId(profileName string) string {
 	f, err := os.Open(credentialsFilePath())
 	if err != nil {
 		log.Println(err)
