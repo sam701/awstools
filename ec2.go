@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aybabtme/rgbterm"
 	"github.com/codegangsta/cli"
@@ -24,7 +23,7 @@ func actionDescribeEC2(c *cli.Context) error {
 }
 
 func printInstanceStatus(searchPattern string) {
-	client := ec2.New(session.New())
+	client := ec2.New(currentEnvVarSession())
 	res, err := client.DescribeInstances(&ec2.DescribeInstancesInput{
 		Filters: []*ec2.Filter{
 			{

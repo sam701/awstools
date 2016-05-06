@@ -12,8 +12,6 @@ import (
 	"github.com/sam701/awstools/cred"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/codegangsta/cli"
@@ -119,13 +117,6 @@ func getMainAccountMfaSessionToken() {
 	}
 
 	persistSharedCredentials(data.Credentials, theConfig.Profiles.MainAccountMfaSession)
-}
-
-func newSession(name string) *session.Session {
-	return session.New(&aws.Config{
-		Region:      aws.String(theConfig.DefaultRegion),
-		Credentials: credentials.NewSharedCredentials("", name),
-	})
 }
 
 func accountId(accountName string) string {
