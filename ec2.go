@@ -55,6 +55,7 @@ func printInstanceStatus(searchPattern string) {
 				rgbterm.FgString(flattenString(in.PrivateIpAddress), 80, 80, 255),
 			)
 			printTags(in, searchPattern)
+			fmt.Println()
 		}
 	}
 }
