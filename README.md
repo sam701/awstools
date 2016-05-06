@@ -5,6 +5,7 @@ A few helpful AWS tools.
 * `assume` - assumes a role on a subaccount behind the main account where you have an access key.
 * `ec2` - searches EC2 instances by pattern.
 * `rotate-main-account-key` - rotates the main account key
+* `cloudformation` - prints stacks parameters and outputs
 
 ## Setup
 Export reqired environment variables:

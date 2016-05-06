@@ -12,7 +12,7 @@ var theConfig *configuration
 func main() {
 	app := cli.NewApp()
 	app.Name = "awstools"
-	app.Version = "0.4.0"
+	app.Version = "0.5.0"
 	app.Usage = "AWS tools"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
@@ -40,16 +40,27 @@ func main() {
 		},
 		{
 			Name:      "ec2",
-			Aliases:   []string{"e"},
-			Usage:     "print EC2 instances and ELBs for the given stack",
-			ArgsUsage: "<stack name prefix>",
+			Usage:     "print EC2 instances and ELBs",
+			ArgsUsage: "<EC2 instance tag substring>",
 			Action:    actionDescribeEC2,
 		},
 		{
-			Name:    "rotate-main-account-key",
-			Aliases: []string{"r"},
-			Usage:   "create a new access key for main account and delete the current one",
-			Action:  rotateMainAccountKey,
+			Name:      "cloudformation",
+			ShortName: "cf",
+			Usage:     "print CloudFormation stacks information",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "search, s",
+					Usage: "stack name substring",
+				},
+			},
+			Action: printStacks,
+		},
+		{
+			Name:      "rotate-main-account-key",
+			ShortName: "r",
+			Usage:     "create a new access key for main account and delete the current one",
+			Action:    rotateMainAccountKey,
 		},
 	}
 	app.Before = func(c *cli.Context) error {
