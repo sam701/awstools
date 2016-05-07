@@ -12,7 +12,7 @@ var theConfig *configuration
 func main() {
 	app := cli.NewApp()
 	app.Name = "awstools"
-	app.Version = "0.5.0"
+	app.Version = "0.6.0"
 	app.Usage = "AWS tools"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
@@ -61,6 +61,18 @@ func main() {
 			ShortName: "r",
 			Usage:     "create a new access key for main account and delete the current one",
 			Action:    rotateMainAccountKey,
+		},
+		{
+			Name:      "kms",
+			Usage:     "encrypt/decrypt text",
+			ArgsUsage: "<text to decrypt>",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "decrypt, d",
+					Usage: "decrypt base64 encoded string",
+				},
+			},
+			Action: kmsAction,
 		},
 	}
 	app.Before = func(c *cli.Context) error {
