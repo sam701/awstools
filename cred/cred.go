@@ -87,6 +87,11 @@ func readCredentials(r io.Reader) *credentialsFile {
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
 		line := sc.Text()
+		line = strings.TrimSpace(line)
+		if len(line) == 0 {
+			continue
+		}
+
 		if line[0] == '[' {
 			gr = &credentialsGroup{
 				profile: line[1 : len(line)-1],
