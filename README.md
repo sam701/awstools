@@ -6,7 +6,7 @@ A few helpful AWS tools.
 * `ec2` - searches EC2 instances by pattern
 * `rotate-main-account-key` - rotates the main account key
 * `cloudformation` - prints stacks parameters and outputs
-* `kms` - decrypts base64 encoded text
+* `kms` - decrypts base64 encoded text or encrypts and encodes with base64
 
 ## Setup
 Export reqired environment variables:

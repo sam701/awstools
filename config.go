@@ -9,12 +9,13 @@ import (
 )
 
 type configuration struct {
-	Profiles struct {
+	DefaultRegion string
+	DefaultKmsKey string
+	Profiles      struct {
 		MainAccount           string
 		MainAccountMfaSession string
 	}
-	DefaultRegion string
-	Accounts      map[string]string
+	Accounts map[string]string
 }
 
 func readConfig(filePath string) *configuration {

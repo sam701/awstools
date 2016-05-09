@@ -12,7 +12,7 @@ var theConfig *configuration
 func main() {
 	app := cli.NewApp()
 	app.Name = "awstools"
-	app.Version = "0.6.0"
+	app.Version = "0.7.0"
 	app.Usage = "AWS tools"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
@@ -70,6 +70,18 @@ func main() {
 				cli.BoolFlag{
 					Name:  "decrypt, d",
 					Usage: "decrypt base64 encoded string",
+				},
+				cli.BoolFlag{
+					Name:  "encrypt, e",
+					Usage: "encrypt and base64 encode string",
+				},
+				cli.StringFlag{
+					Name:  "key-id",
+					Usage: "",
+				},
+				cli.BoolFlag{
+					Name:  "quiet, q",
+					Usage: "print only encrypted/decrypted text",
 				},
 			},
 			Action: kmsAction,
