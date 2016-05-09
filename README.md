@@ -40,6 +40,7 @@ The default path to the configuration file is `$HOME/.config/awstools/config.tom
 Here is an example of a `config.toml`:
 ```
 defaultRegion = "eu-west-1"
+defaultKmsKey = "arn:aws:kms:eu-west-1:000000000001:key/00000000-1111-1111-2222-333333333333"
 
 [profiles]
 mainAccount = "main_account"
