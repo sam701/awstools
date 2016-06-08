@@ -86,6 +86,25 @@ func main() {
 			},
 			Action: kmsAction,
 		},
+		{
+			Name:  "kinesis",
+			Usage: "print records from kinesis streams",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "list-streams, l",
+					Usage: "list kinesis streams",
+				},
+				cli.StringFlag{
+					Name:  "search-stream, s",
+					Usage: "stream to search",
+				},
+				cli.StringSliceFlag{
+					Name:  "pattern, p",
+					Usage: "pattern to search for (case sensitive)",
+				},
+			},
+			Action: kinesisPrintRecords,
+		},
 	}
 	app.Before = func(c *cli.Context) error {
 		theConfig = readConfig(c.String("config"))

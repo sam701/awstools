@@ -7,6 +7,7 @@ A few helpful AWS tools.
 * `rotate-main-account-key` - rotates the main account key
 * `cloudformation` - prints stacks parameters and outputs
 * `kms` - decrypts base64 encoded text or encrypts and encodes with base64
+* `kinesis` - grabs kinesis stream for patterns
 
 ## Setup
 Export reqired environment variables:
