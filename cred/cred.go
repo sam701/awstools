@@ -99,7 +99,10 @@ func readCredentials(r io.Reader) *credentialsFile {
 			}
 			cf.groups = append(cf.groups, gr)
 		} else {
-			pp := strings.Split(line, " = ")
+			pp := strings.Split(line, "=")
+			for i, v := range pp {
+				pp[i] = strings.TrimSpace(v)
+			}
 			gr.lines = append(gr.lines, &propertyLine{pp[0], pp[1]})
 		}
 	}
