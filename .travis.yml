@@ -17,5 +17,4 @@ deploy:
     - "awstools_linux_amd64"
   skip_cleanup: true
   on:
-
-tags: true
+    tags: true
