@@ -1,5 +1,5 @@
 # awstools
-A few helpful AWS tools.
+[![Build Status](https://travis-ci.org/sam701/awstools.svg?branch=master)](https://travis-ci.org/sam701/awstools) A few helpful AWS tools.
 
 ## Tools
 * `assume` - assumes a role on a subaccount behind the main account where you have an access key
