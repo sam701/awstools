@@ -9,7 +9,27 @@
 * `kms` - decrypts base64 encoded text or encrypts and encodes with base64
 * `kinesis` - grabs kinesis stream for patterns
 
-## Setup
+## Install
+
+[We provide binaries for all releases through GitHub](https://github.com/sam701/awstools/releases). The latest release is [0.7.0](https://github.com/sam701/awstools/releases/latest).
+
+To install `awstools` choose the binary for your architecture (either OSX or Linux), run a download and use `chmod` to make it executable.
+
+### OSX
+
+```sh
+$ curl -o awstools -SsL https://github.com/sam701/awstools/releases/download/0.7.0/awstools_darwin_amd64
+$ chmod +x awstools
+```
+
+### Linux
+
+```sh
+$ curl -o awstools -SsL https://github.com/sam701/awstools/releases/download/0.7.0/awstools_linux_amd64
+$ chmod +x awstools
+```
+
+## Build
 Export reqired environment variables:
 ```
 export GOPATH=$HOME/goprojects
@@ -55,3 +75,7 @@ prod = "000000000003"
 
 * `profiles` section contains profile names that will be saved in `$HOME/.aws/credentials`.
 * `accounts` section contains account ids and its names.
+
+# License
+
+This project is licensed under the MIT license. You can find a copy of the license at the top level of the repository.
