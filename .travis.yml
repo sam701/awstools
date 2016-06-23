@@ -1,9 +1,17 @@
 language: go
+
 env:
   - GIMME_OS=darwin GIMME_ARCH=386
   - GIMME_OS=darwin GIMME_ARCH=amd64
   - GIMME_OS=linux GIMME_ARCH=386
   - GIMME_OS=linux GIMME_ARCH=amd64
+
+install:
+  - go get -d -v ./...
+
+script:
+  - go build -v ./...
+
 deploy:
   provider: releases
   api_key:
@@ -15,4 +23,5 @@ deploy:
     - "awstools_linux_amd64"
   skip_cleanup: true
   on:
+
 tags: true
