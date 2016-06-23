@@ -1,25 +1,21 @@
 language: go
 
-env:
-  - GIMME_OS=darwin GIMME_ARCH=386
-  - GIMME_OS=darwin GIMME_ARCH=amd64
-  - GIMME_OS=linux GIMME_ARCH=386
-  - GIMME_OS=linux GIMME_ARCH=amd64
+go:
+  - 1.6.2
 
-install:
-  - go get -d -v ./...
-
+before_install:
+  - go get github.com/mitchellh/gox
+before_script:
+  - gox -os="darwin linux" -arch="amd64" -build-toolchain
 script:
-  - go build -v ./...
+  - gox -os="darwin linux" -arch="amd64"
 
 deploy:
   provider: releases
   api_key:
     secure: QbVSG99lUA0/m4NQXSWayZAR4ihPAzvFIy6f9x2I/4wWpTm6cZBZa+E7Uyr9NjSh8W46R93NLALEDhMCEdWM8wZ0LESB98lqqxHy9ORYoJsLD+A2x5Pi+X7k5vEGQ2qvRn/eF+LmYDqZ0g3ScghVMQN3WG2OWLgwP1R6fPSlpfUa3XGEakw5cRRDSxJnLu2Q8SEWbkBxKidrX10diu7MdkLTfYCdHFkEGedStpccQvGfKhCrFhbRrD8W29iz8mHImtfWRchB31JmN1ErijktGISvV2GB+yggJe3X8KZgVA+X4bq0EMT4nACVtHxqBojkuMPfbII213JqP2dpOGt2Gr2SxpsY0pzBgNpVDrylf1S4aEq5RkHocdrDgZBrcgAqHJXlTtnzaYL/ccw0c4/lxQmXqbOqe2PFpeGuERCBPEgVbC1np6TyeW19HO5AJ11Ozdf/weaG6nGvuTmtDc+M/wiB7MDOc0gsRepRzLHvpJXmpFoU/se7MwnYLD4VJXhQguXoWcsdH2fUJnOvlex/Qte04Jk+SwnIKT8NXLNwFHT0o1mtY4cIy0Bq0CIgJT2+yc0Ajp8bON8FYQfr/wAOTnwb25H7Ig3bHAnlmGyWwr3Iwvjok/YI1F/28nlKNJa4hdab4keiCZNjBE09UA0ARxYMoictKdVSF7S73jaN4w0=
   file:
-    - "awstools_darwin_386"
     - "awstools_darwin_amd64"
-    - "awstools_linux_386"
     - "awstools_linux_amd64"
   skip_cleanup: true
   on:
