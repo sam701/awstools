@@ -10,10 +10,11 @@ import (
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/aybabtme/rgbterm"
 	"github.com/codegangsta/cli"
+	"github.com/sam701/awstools/sess"
 )
 
 func kinesisPrintRecords(c *cli.Context) error {
-	client := kinesis.New(currentEnvVarSession())
+	client := kinesis.New(sess.FromEnvVar())
 
 	if c.Bool("list-streams") {
 		out, err := client.ListStreams(&kinesis.ListStreamsInput{})
