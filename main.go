@@ -53,6 +53,10 @@ func main() {
 					Name:  "search, s",
 					Usage: "stack name substring",
 				},
+				cli.StringFlag{
+					Name:  "delete",
+					Usage: "delete stack",
+				},
 			},
 			Action: printStacks,
 		},

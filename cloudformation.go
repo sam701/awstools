@@ -4,29 +4,105 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aybabtme/rgbterm"
 	"github.com/codegangsta/cli"
 )
 
 func printStacks(c *cli.Context) error {
-	pattern := c.String("search")
-	if pattern == "" {
-		cli.ShowCommandHelp(c, "cloudformation")
-	} else {
+	if searchPattern := c.String("search"); searchPattern != "" {
 		cf := cloudformation.New(currentEnvVarSession())
 		out, err := cf.DescribeStacks(&cloudformation.DescribeStacksInput{})
 		if err != nil {
 			log.Fatalln("ERROR", err)
 		}
 		for _, stack := range out.Stacks {
-			if strings.Contains(*stack.StackName, pattern) {
+			if strings.Contains(*stack.StackName, searchPattern) {
 				formatStack(stack)
 			}
 		}
+	} else if stackToDelete := c.String("delete"); stackToDelete != "" {
+		deleteStack(stackToDelete)
+	} else {
+		cli.ShowCommandHelp(c, "cloudformation")
 	}
 	return nil
+}
+
+func deleteStack(name string) bool {
+	cf := cloudformation.New(currentEnvVarSession())
+	awsName := aws.String(name)
+	_, err := cf.DeleteStack(&cloudformation.DeleteStackInput{
+		StackName: awsName,
+	})
+	if err != nil {
+		log.Fatalln("ERROR", err)
+	}
+
+	seenCount := 0
+	readingEvents := true
+	for {
+		if !readingEvents {
+			break
+		}
+		events := readStackEvents(cf, awsName)
+
+		if len(events) > seenCount {
+			for _, event := range events[seenCount:] {
+				fmt.Printf("%s %-20s %-30s %-40s %s\n",
+					event.Timestamp.Format(time.RFC3339),
+					awsToString(event.ResourceStatus),
+					awsToString(event.ResourceType),
+					awsToString(event.LogicalResourceId),
+					awsToString(event.ResourceStatusReason),
+				)
+			}
+
+			seenCount += len(events)
+		}
+		time.Sleep(5 * time.Second)
+	}
+
+	return true
+}
+
+func awsToString(s *string) string {
+	if s == nil {
+		return ""
+	} else {
+		return *s
+	}
+}
+
+func readStackEvents(cf *cloudformation.CloudFormation, stackName *string) []*cloudformation.StackEvent {
+	var token *string = nil
+	events := make([]*cloudformation.StackEvent, 0, 32)
+	for {
+		out, err := cf.DescribeStackEvents(&cloudformation.DescribeStackEventsInput{
+			NextToken: token,
+			StackName: stackName,
+		})
+		if err != nil {
+			log.Fatalln("ERROR", err)
+		}
+
+		events = append(events, out.StackEvents...)
+
+		token = out.NextToken
+		if token == nil {
+			break
+		}
+	}
+
+	// reverse
+	for i, j := 0, len(events)-1; i < j; i, j = i+1, j-1 {
+		events[i], events[j] = events[j], events[i]
+	}
+
+	return events
 }
 
 func formatStack(stack *cloudformation.Stack) {
