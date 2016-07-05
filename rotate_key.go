@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/sam701/awstools/config"
 	"github.com/sam701/awstools/cred"
+	"github.com/sam701/awstools/sess"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/iam"
@@ -12,7 +14,7 @@ import (
 )
 
 func rotateMainAccountKey(*cli.Context) error {
-	client := iam.New(newSession(theConfig.Profiles.MainAccount))
+	client := iam.New(sess.New(config.Current.Profiles.MainAccount))
 	key, err := client.CreateAccessKey(&iam.CreateAccessKeyInput{
 		UserName: aws.String(getUserName()),
 	})
@@ -20,8 +22,8 @@ func rotateMainAccountKey(*cli.Context) error {
 		log.Fatalln("ERROR", err)
 	}
 
-	currentAccessKeyId := cred.GetMainAccountKeyId(theConfig.Profiles.MainAccount)
-	cred.SaveCredentials(theConfig.Profiles.MainAccount, *key.AccessKey.AccessKeyId, *key.AccessKey.SecretAccessKey, "")
+	currentAccessKeyId := cred.GetMainAccountKeyId(config.Current.Profiles.MainAccount)
+	cred.SaveCredentials(config.Current.Profiles.MainAccount, *key.AccessKey.AccessKeyId, *key.AccessKey.SecretAccessKey, "")
 	fmt.Println("Created new access key")
 
 	_, err = client.DeleteAccessKey(&iam.DeleteAccessKeyInput{

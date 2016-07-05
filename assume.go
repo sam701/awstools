@@ -9,7 +9,9 @@ import (
 	"path"
 	"strings"
 
+	"github.com/sam701/awstools/config"
 	"github.com/sam701/awstools/cred"
+	"github.com/sam701/awstools/sess"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/iam"
@@ -56,7 +58,7 @@ func assumeRole(account, role string) {
 
 func adjustAccountName(account string) string {
 	var candidate string
-	for k, _ := range theConfig.Accounts {
+	for k, _ := range config.Current.Accounts {
 		if strings.Contains(k, account) {
 			if candidate == "" {
 				candidate = k
@@ -85,7 +87,7 @@ var userName string
 
 func getUserName() string {
 	if userName == "" {
-		client := iam.New(newSession(theConfig.Profiles.MainAccount))
+		client := iam.New(sess.New(config.Current.Profiles.MainAccount))
 		data, err := client.GetUser(&iam.GetUserInput{})
 		if err != nil {
 			log.Fatalln("ERROR:", err)
@@ -104,11 +106,11 @@ func readMfaToken() string {
 
 func getMainAccountMfaSessionToken() {
 	token := readMfaToken()
-	session := newSession(theConfig.Profiles.MainAccount)
+	session := sess.New(config.Current.Profiles.MainAccount)
 	stsClient := sts.New(session)
 	data, err := stsClient.GetSessionToken(&sts.GetSessionTokenInput{
 		SerialNumber: aws.String(fmt.Sprintf("arn:aws:iam::%s:mfa/%s",
-			accountId(theConfig.Profiles.MainAccount),
+			accountId(config.Current.Profiles.MainAccount),
 			getUserName())),
 		TokenCode: aws.String(token),
 	})
@@ -116,11 +118,11 @@ func getMainAccountMfaSessionToken() {
 		log.Fatalln("ERROR:", err)
 	}
 
-	persistSharedCredentials(data.Credentials, theConfig.Profiles.MainAccountMfaSession)
+	persistSharedCredentials(data.Credentials, config.Current.Profiles.MainAccountMfaSession)
 }
 
 func accountId(accountName string) string {
-	accountId := theConfig.Accounts[accountName]
+	accountId := config.Current.Accounts[accountName]
 	if accountId == "" {
 		log.Fatalln("Unknown account name:", accountName)
 	}
@@ -128,7 +130,7 @@ func accountId(accountName string) string {
 }
 
 func tryToAssumeRole(accountName, role string) error {
-	session := newSession(theConfig.Profiles.MainAccountMfaSession)
+	session := sess.New(config.Current.Profiles.MainAccountMfaSession)
 	accountId := accountId(accountName)
 
 	stsClient := sts.New(session)

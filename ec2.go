@@ -10,6 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/aybabtme/rgbterm"
 	"github.com/codegangsta/cli"
+	"github.com/sam701/awstools/sess"
 )
 
 func actionDescribeEC2(c *cli.Context) error {
@@ -23,7 +24,7 @@ func actionDescribeEC2(c *cli.Context) error {
 }
 
 func printInstanceStatus(searchPattern string) {
-	client := ec2.New(currentEnvVarSession())
+	client := ec2.New(sess.FromEnvVar())
 	res, err := client.DescribeInstances(&ec2.DescribeInstancesInput{
 		Filters: []*ec2.Filter{
 			{

@@ -1,4 +1,4 @@
-package main
+package cf
 
 import (
 	"fmt"
@@ -7,26 +7,18 @@ import (
 
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/aybabtme/rgbterm"
-	"github.com/codegangsta/cli"
 )
 
-func printStacks(c *cli.Context) error {
-	pattern := c.String("search")
-	if pattern == "" {
-		cli.ShowCommandHelp(c, "cloudformation")
-	} else {
-		cf := cloudformation.New(currentEnvVarSession())
-		out, err := cf.DescribeStacks(&cloudformation.DescribeStacksInput{})
-		if err != nil {
-			log.Fatalln("ERROR", err)
-		}
-		for _, stack := range out.Stacks {
-			if strings.Contains(*stack.StackName, pattern) {
-				formatStack(stack)
-			}
+func searchStack(pattern string) {
+	out, err := cfClient.DescribeStacks(&cloudformation.DescribeStacksInput{})
+	if err != nil {
+		log.Fatalln("ERROR", err)
+	}
+	for _, stack := range out.Stacks {
+		if strings.Contains(*stack.StackName, pattern) {
+			formatStack(stack)
 		}
 	}
-	return nil
 }
 
 func formatStack(stack *cloudformation.Stack) {

@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"github.com/codegangsta/cli"
+	"github.com/sam701/awstools/cf"
+	"github.com/sam701/awstools/config"
 )
-
-var theConfig *configuration
 
 func main() {
 	app := cli.NewApp()
@@ -53,8 +53,16 @@ func main() {
 					Name:  "search, s",
 					Usage: "stack name substring",
 				},
+				cli.StringFlag{
+					Name:  "events, e",
+					Usage: "print stack's events",
+				},
+				cli.StringFlag{
+					Name:  "delete",
+					Usage: "delete stack",
+				},
 			},
-			Action: printStacks,
+			Action: cf.HandleCloudformation,
 		},
 		{
 			Name:      "rotate-main-account-key",
@@ -107,14 +115,14 @@ func main() {
 		},
 	}
 	app.Before = func(c *cli.Context) error {
-		theConfig = readConfig(c.String("config"))
+		config.Read(c.String("config"))
 		return nil
 	}
 	app.Run(os.Args)
 }
 
 func actionPrintKnownAccounts(c *cli.Context) error {
-	for name, accountId := range theConfig.Accounts {
+	for name, accountId := range config.Current.Accounts {
 		fmt.Println(name, "=", accountId)
 	}
 	return nil

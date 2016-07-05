@@ -8,6 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/kms"
 	"github.com/codegangsta/cli"
+	"github.com/sam701/awstools/config"
+	"github.com/sam701/awstools/sess"
 )
 
 func kmsAction(c *cli.Context) error {
@@ -17,7 +19,7 @@ func kmsAction(c *cli.Context) error {
 		return nil
 	}
 	quiet := c.Bool("quiet")
-	cl := kms.New(currentEnvVarSession())
+	cl := kms.New(sess.FromEnvVar())
 	if c.Bool("decrypt") {
 		bb, err := base64.StdEncoding.DecodeString(txt)
 		if err != nil {
@@ -37,7 +39,7 @@ func kmsAction(c *cli.Context) error {
 	} else if c.Bool("encrypt") {
 		keyId := c.String("key-id")
 		if keyId == "" {
-			keyId = theConfig.DefaultKmsKey
+			keyId = config.Current.DefaultKmsKey
 		}
 		if keyId == "" {
 			log.Fatalln("No key-id provided")

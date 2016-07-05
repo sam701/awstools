@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"log"
@@ -8,7 +8,9 @@ import (
 	"github.com/naoina/toml"
 )
 
-type configuration struct {
+var Current *Configuration
+
+type Configuration struct {
 	DefaultRegion string
 	DefaultKmsKey string
 	Profiles      struct {
@@ -18,7 +20,7 @@ type configuration struct {
 	Accounts map[string]string
 }
 
-func readConfig(filePath string) *configuration {
+func Read(filePath string) {
 	if filePath == "" {
 		filePath = path.Join(os.Getenv("HOME"), ".config", "awstools", "config.toml")
 	}
@@ -28,11 +30,11 @@ func readConfig(filePath string) *configuration {
 	}
 	defer f.Close()
 
-	var c configuration
+	var c Configuration
 	err = toml.NewDecoder(f).Decode(&c)
 	if err != nil {
 		log.Fatalln("ERROR", err)
 	}
 
-	return &c
+	Current = &c
 }
