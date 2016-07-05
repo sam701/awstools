@@ -2,6 +2,8 @@ package cf
 
 import (
 	"fmt"
+	"log"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/service/cloudformation"
@@ -22,10 +24,11 @@ func printStackEvents(stackName *string) {
 
 		if len(events) > seenCount {
 			for _, event := range events[seenCount:] {
-				fmt.Printf("%s %-20s %s\n    %-40s %s\n",
-					rgbterm.FgString(event.Timestamp.Format(time.RFC3339), 130, 255, 130),
-					awsToString(event.ResourceStatus),
+				fmt.Printf("%s %s %s\n%s%-40s %s\n",
+					rgbterm.FgString(event.Timestamp.Format(time.RFC3339), 255, 255, 255),
+					statusColor(fmt.Sprintf("%-20s", *event.ResourceStatus)),
 					awsToString(event.ResourceType),
+					strings.Repeat(" ", 21),
 					awsToString(event.LogicalResourceId),
 					awsToString(event.ResourceStatusReason),
 				)
@@ -37,6 +40,22 @@ func printStackEvents(stackName *string) {
 	}
 }
 
+func statusColor(status string) string {
+	if strings.Contains(status, "IN_PROGRESS") {
+		return rgbterm.FgString(status, 255, 255, 130)
+	} else if strings.Contains(status, "_COMPLETE") {
+		return rgbterm.FgString(status, 130, 255, 130)
+	} else if strings.Contains(status, "_DELETED") {
+		return rgbterm.FgString(status, 255, 255, 130)
+	} else if strings.Contains(status, "_FAILED") {
+		return rgbterm.FgString(status, 255, 130, 130)
+	}
+
+	return status
+}
+
+var haveSuccessfulEventRetrieval = false
+
 func readStackEvents(stackName *string) []*cloudformation.StackEvent {
 	var token *string = nil
 	events := make([]*cloudformation.StackEvent, 0, 32)
@@ -46,8 +65,13 @@ func readStackEvents(stackName *string) []*cloudformation.StackEvent {
 			StackName: stackName,
 		})
 		if err != nil {
-			break
+			if haveSuccessfulEventRetrieval {
+				break
+			} else {
+				log.Fatalln("ERROR", err)
+			}
 		}
+		haveSuccessfulEventRetrieval = true
 
 		events = append(events, out.StackEvents...)
 
