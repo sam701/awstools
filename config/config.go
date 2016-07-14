@@ -11,9 +11,11 @@ import (
 var Current *Configuration
 
 type Configuration struct {
-	DefaultRegion string
-	DefaultKmsKey string
-	Profiles      struct {
+	DefaultRegion            string
+	DefaultKmsKey            string
+	AutoRotateMainAccountKey bool
+
+	Profiles struct {
 		MainAccount           string
 		MainAccountMfaSession string
 	}

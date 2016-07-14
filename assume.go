@@ -48,6 +48,9 @@ func assumeRole(account, role string) {
 
 	err := tryToAssumeRole(account, role)
 	if err != nil {
+		if config.Current.AutoRotateMainAccountKey {
+			rotateMainAccountKey()
+		}
 		getMainAccountMfaSessionToken()
 		err = tryToAssumeRole(account, role)
 		if err != nil {

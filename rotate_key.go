@@ -13,7 +13,12 @@ import (
 	"github.com/codegangsta/cli"
 )
 
-func rotateMainAccountKey(*cli.Context) error {
+func rotateMainAccountKeyAction(*cli.Context) error {
+	rotateMainAccountKey()
+	return nil
+}
+
+func rotateMainAccountKey() {
 	client := iam.New(sess.New(config.Current.Profiles.MainAccount))
 	key, err := client.CreateAccessKey(&iam.CreateAccessKeyInput{
 		UserName: aws.String(getUserName()),
@@ -34,6 +39,4 @@ func rotateMainAccountKey(*cli.Context) error {
 		log.Fatalln("ERROR", err)
 	}
 	fmt.Println("Deleted old access key")
-
-	return nil
 }

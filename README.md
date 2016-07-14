@@ -7,7 +7,7 @@
 * `rotate-main-account-key` - rotates the main account key
 * `cloudformation` - prints stacks parameters and outputs
 * `kms` - decrypts base64 encoded text or encrypts and encodes with base64
-* `kinesis` - grabs kinesis stream for patterns
+* `kinesis` - lists streams, grabs kinesis stream for patterns
 
 ## Install
 
@@ -62,6 +62,9 @@ Here is an example of a `config.toml`:
 ```
 defaultRegion = "eu-west-1"
 defaultKmsKey = "arn:aws:kms:eu-west-1:000000000001:key/00000000-1111-1111-2222-333333333333"
+
+# If true, creates a new main account key and deletes the old one before every new MFA session.
+autoRotateMainAccountKey = true
 
 [profiles]
 mainAccount = "main_account"

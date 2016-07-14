@@ -68,7 +68,7 @@ func main() {
 			Name:      "rotate-main-account-key",
 			ShortName: "r",
 			Usage:     "create a new access key for main account and delete the current one",
-			Action:    rotateMainAccountKey,
+			Action:    rotateMainAccountKeyAction,
 		},
 		{
 			Name:      "kms",
