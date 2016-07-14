@@ -5,7 +5,7 @@
 * `assume` - assumes a role on a subaccount behind the main account where you have an access key
 * `ec2` - searches EC2 instances by pattern
 * `rotate-main-account-key` - rotates the main account key
-* `cloudformation` - prints stacks parameters and outputs
+* `cloudformation` - prints stacks parameters and outputs, deletes stacks
 * `kms` - decrypts base64 encoded text or encrypts and encodes with base64
 * `kinesis` - lists streams, grabs kinesis stream for patterns
 
@@ -31,18 +31,18 @@ $ chmod +x awstools
 
 ## Build
 Export reqired environment variables:
-```
+```sh
 export GOPATH=$HOME/goprojects
 export PATH=$PATH:$GOPATH/bin
 ```
 
 Install `awstools`:
-```
+```sh
 go get -u github.com/sam701/awstools
 ```
 
 Add to your .bash_profile
-```
+```sh
 aws_assume(){
 	tmpFile=/tmp/assume.tmp
 	awstools assume --export $tmpFile $@ && source $tmpFile
@@ -50,7 +50,7 @@ aws_assume(){
 }
 ```
 Now in order to assume a role on a subaccount, you can run something like this
-```
+```sh
 aws_assume AccountName MyRoleOnSubAccount
 ```
 
@@ -59,7 +59,7 @@ aws_assume AccountName MyRoleOnSubAccount
 The default path to the configuration file is `$HOME/.config/awstools/config.toml`.
 
 Here is an example of a `config.toml`:
-```
+```toml
 defaultRegion = "eu-west-1"
 defaultKmsKey = "arn:aws:kms:eu-west-1:000000000001:key/00000000-1111-1111-2222-333333333333"
 
