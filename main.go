@@ -28,7 +28,7 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "export, e",
-					Usage: "path to export the shell script to source in",
+					Usage: "export shell script to `PATH`",
 				},
 			},
 			Action: actionAssumeRole,
@@ -51,15 +51,15 @@ func main() {
 			Flags: []cli.Flag{
 				cli.StringFlag{
 					Name:  "search, s",
-					Usage: "stack name substring",
+					Usage: "search for `SUBSTRING` in stack names",
 				},
 				cli.StringFlag{
 					Name:  "events, e",
-					Usage: "print stack's events",
+					Usage: "print events of `STACK`",
 				},
 				cli.StringFlag{
 					Name:  "delete",
-					Usage: "delete stack",
+					Usage: "delete `STACK`",
 				},
 			},
 			Action: cf.HandleCloudformation,
@@ -73,7 +73,7 @@ func main() {
 		{
 			Name:      "kms",
 			Usage:     "encrypt/decrypt text",
-			ArgsUsage: "<text to decrypt>",
+			ArgsUsage: "<text to de-/encrypt>",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
 					Name:  "decrypt, d",
@@ -85,11 +85,11 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "key-id",
-					Usage: "",
+					Usage: "use `KEYID` for encryption/decryption",
 				},
 				cli.BoolFlag{
 					Name:  "quiet, q",
-					Usage: "print only encrypted/decrypted text",
+					Usage: "print only de-/encrypted text",
 				},
 			},
 			Action: kmsAction,
@@ -104,11 +104,11 @@ func main() {
 				},
 				cli.StringFlag{
 					Name:  "search-stream, s",
-					Usage: "stream to search",
+					Usage: "search `STREAM`",
 				},
 				cli.StringSliceFlag{
 					Name:  "pattern, p",
-					Usage: "pattern to search for (case sensitive)",
+					Usage: "search for (case sensitive) `PATTERN`",
 				},
 			},
 			Action: kinesisPrintRecords,
