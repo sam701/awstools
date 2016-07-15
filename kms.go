@@ -7,9 +7,9 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/kms"
-	"github.com/codegangsta/cli"
 	"github.com/sam701/awstools/config"
 	"github.com/sam701/awstools/sess"
+	"github.com/urfave/cli"
 )
 
 func kmsAction(c *cli.Context) error {

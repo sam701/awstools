@@ -9,8 +9,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/aybabtme/rgbterm"
-	"github.com/codegangsta/cli"
 	"github.com/sam701/awstools/sess"
+	"github.com/urfave/cli"
 )
 
 func kinesisPrintRecords(c *cli.Context) error {

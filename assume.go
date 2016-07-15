@@ -16,7 +16,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/iam"
 	"github.com/aws/aws-sdk-go/service/sts"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 )
 
 var scriptOutput io.Writer = os.Stdout

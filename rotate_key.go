@@ -10,7 +10,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/iam"
-	"github.com/codegangsta/cli"
+	"github.com/urfave/cli"
 )
 
 func rotateMainAccountKeyAction(*cli.Context) error {

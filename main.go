@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/codegangsta/cli"
 	"github.com/sam701/awstools/cf"
 	"github.com/sam701/awstools/config"
+	"github.com/urfave/cli"
 )
 
 func main() {
