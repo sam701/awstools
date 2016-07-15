@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/sam701/awstools/config"
 	"github.com/sam701/awstools/cred"
@@ -48,15 +49,43 @@ func assumeRole(account, role string) {
 
 	err := tryToAssumeRole(account, role)
 	if err != nil {
-		if config.Current.AutoRotateMainAccountKey {
-			rotateMainAccountKey()
-		}
+		needToBeRotatedChan := make(chan bool)
+		go isNeedRotateKey(needToBeRotatedChan)
+
 		getMainAccountMfaSessionToken()
 		err = tryToAssumeRole(account, role)
 		if err != nil {
 			log.Fatalln(err)
 		}
+
+		if <-needToBeRotatedChan {
+			rotateMainAccountKey()
+		}
 	}
+}
+
+func isNeedRotateKey(needToBeRotated chan<- bool) {
+	session := sess.New(config.Current.Profiles.MainAccount)
+	cl := iam.New(session)
+
+	keyId := cred.GetMainAccountKeyId(config.Current.Profiles.MainAccount)
+	out, err := cl.ListAccessKeys(&iam.ListAccessKeysInput{})
+	if err != nil {
+		log.Fatalln("ERROR", err)
+	}
+
+	var creationTime time.Time
+	for _, md := range out.AccessKeyMetadata {
+		if keyId == *md.AccessKeyId {
+			creationTime = *md.CreateDate
+			break
+		}
+	}
+	if creationTime.IsZero() {
+		log.Fatalln("Cannot get creation time for key", keyId)
+	}
+
+	needToBeRotated <- int(time.Now().Sub(creationTime).Minutes()) >= config.Current.KeyRotationIntervalMinutes
 }
 
 func adjustAccountName(account string) string {

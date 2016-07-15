@@ -63,8 +63,8 @@ Here is an example of a `config.toml`:
 defaultRegion = "eu-west-1"
 defaultKmsKey = "arn:aws:kms:eu-west-1:000000000001:key/00000000-1111-1111-2222-333333333333"
 
-# If true, creates a new main account key and deletes the old one before every new MFA session.
-autoRotateMainAccountKey = true
+# Rotate the main account access key every week
+keyRotationIntervalMinutes = 10080
 
 [profiles]
 mainAccount = "main_account"
