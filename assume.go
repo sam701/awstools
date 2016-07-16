@@ -177,6 +177,8 @@ func tryToAssumeRole(accountName, role string) error {
 	profile := fmt.Sprintf("%s %s", accountName, role)
 	persistSharedCredentials(assumeData.Credentials, profile)
 	printExport(assumeData.Credentials)
+
+	cred.SetProfileRegion(profile, config.Current.DefaultRegion)
 	return nil
 }
 
