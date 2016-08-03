@@ -6,13 +6,14 @@ import (
 
 	"github.com/sam701/awstools/cf"
 	"github.com/sam701/awstools/config"
+	"github.com/sam701/awstools/cw"
 	"github.com/urfave/cli"
 )
 
 func main() {
 	app := cli.NewApp()
 	app.Name = "awstools"
-	app.Version = "0.8.1"
+	app.Version = "0.9.0"
 	app.Usage = "AWS tools"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
@@ -112,6 +113,36 @@ func main() {
 				},
 			},
 			Action: kinesisPrintRecords,
+		},
+		{
+			Name:      "cloudwatch",
+			ShortName: "cw",
+			Usage:     "search in cloudwatch logs",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "list-groups, l",
+					Usage: "list CloudWatch groups",
+				},
+				cli.StringFlag{
+					Name:  "group, g",
+					Usage: "`GROUP` to grab (or a unique substring)",
+				},
+				cli.StringFlag{
+					Name:  "pattern, p",
+					Usage: "`PATTERN` to grab",
+				},
+				cli.StringFlag{
+					Name:  "start",
+					Usage: "start `TIME` to grab",
+					Value: "-24h",
+				},
+				cli.StringFlag{
+					Name:  "end",
+					Usage: "end `TIME` to grab",
+					Value: "now",
+				},
+			},
+			Action: cw.CloudwatchAction,
 		},
 	}
 	app.Before = func(c *cli.Context) error {
