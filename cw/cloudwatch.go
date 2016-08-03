@@ -39,6 +39,23 @@ type filter struct {
 	end     time.Time
 }
 
+func parseTime(str string, layouts ...string) time.Time {
+	for _, layout := range layouts {
+		t, err := time.Parse(layout, str)
+		if err == nil {
+			n := time.Now()
+			if t.Year() == 0 {
+				t = time.Date(n.Year(), n.Month(), n.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), n.Location())
+			} else {
+				t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), n.Location())
+			}
+			return t
+		}
+	}
+	log.Fatalln("Cannot parse time:", str)
+	return time.Now()
+}
+
 func parseTimeBoundary(str string) time.Time {
 	now := time.Now()
 	if str == "now" {
@@ -54,6 +71,8 @@ func parseTimeBoundary(str string) time.Time {
 		duration = time.Minute
 	case 's':
 		duration = time.Second
+	default:
+		return parseTime(str, "15:04:05", "15:04", "2006-01-02", "2006-01-02T15:04", "2006-01-02T15:04:05")
 	}
 
 	i, err := strconv.Atoi(str[:len(str)-1])
@@ -72,6 +91,7 @@ func toTimeString(millis *int64) string {
 }
 
 func grabInGroup(groupName string, filter *filter) {
+	fmt.Printf("Searching for '%s' in %s in interval [%s, %s]\n", filter.pattern, groupName, filter.start, filter.end)
 	params := &cloudwatchlogs.FilterLogEventsInput{
 		LogGroupName: aws.String(groupName),
 		StartTime:    aws.Int64(filter.start.Unix() * 1000),
@@ -97,8 +117,6 @@ func grabInGroup(groupName string, filter *filter) {
 	if err != nil {
 		log.Fatalln("ERROR", err)
 	}
-	fmt.Println("return")
-
 }
 
 func listGroups() {
