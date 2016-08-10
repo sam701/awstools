@@ -8,6 +8,7 @@
 * `cloudformation` - prints stacks parameters and outputs, deletes stacks
 * `kms` - decrypts base64 encoded text or encrypts and encodes with base64
 * `kinesis` - lists streams, grabs kinesis stream for patterns
+* `cloudwatch` - searches cloudwatch logs
 
 ## Install
 
