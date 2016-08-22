@@ -77,6 +77,10 @@ func main() {
 			ArgsUsage: "<text to de-/encrypt>",
 			Flags: []cli.Flag{
 				cli.BoolFlag{
+					Name:  "list-keys, l",
+					Usage: "list KMS keys",
+				},
+				cli.BoolFlag{
 					Name:  "decrypt, d",
 					Usage: "decrypt base64 encoded string",
 				},

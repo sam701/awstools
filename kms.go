@@ -7,6 +7,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/kms"
+	"github.com/aybabtme/rgbterm"
 	"github.com/sam701/awstools/config"
 	"github.com/sam701/awstools/sess"
 	"github.com/urfave/cli"
@@ -14,6 +15,12 @@ import (
 
 func kmsAction(c *cli.Context) error {
 	txt := c.Args().First()
+
+	if c.Bool("list-keys") {
+		listKmsKeys()
+		return nil
+	}
+
 	if txt == "" {
 		cli.ShowCommandHelp(c, "kms")
 		return nil
@@ -59,4 +66,35 @@ func kmsAction(c *cli.Context) error {
 		cli.ShowCommandHelp(c, "kms")
 	}
 	return nil
+}
+
+func listKmsKeys() {
+	cl := kms.New(sess.FromEnvVar())
+
+	out, err := cl.ListAliases(&kms.ListAliasesInput{})
+	if err != nil {
+		log.Fatalln("ERROR", err)
+	}
+	for _, v := range out.Aliases {
+		res, err := cl.DescribeKey(&kms.DescribeKeyInput{
+			KeyId: v.AliasArn,
+		})
+		if err != nil {
+			log.Fatalln("ERROR", err)
+		}
+
+		md := res.KeyMetadata
+
+		fmt.Println(rgbterm.FgString(*md.Arn, 100, 255, 100))
+		fmt.Println(formatProp("Alias"), rgbterm.FgString(*v.AliasName, 255, 100, 100))
+		fmt.Println(formatProp("Description"), *md.Description)
+		fmt.Println(formatProp("Created"), *md.CreationDate)
+		fmt.Println(formatProp("Enabled"), *md.Enabled)
+		fmt.Println(formatProp("Usage"), *md.KeyUsage)
+		fmt.Println()
+	}
+}
+
+func formatProp(prop string) string {
+	return rgbterm.FgString("  "+prop+":", 150, 150, 255)
 }
