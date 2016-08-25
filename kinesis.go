@@ -41,7 +41,7 @@ func kinesisPrintRecords(c *cli.Context) error {
 	}
 
 	for _, shard := range dsr.StreamDescription.Shards {
-		go searchInShard(client, streamName, shard.ShardId, c.StringSlice("pattern"))
+		go searchInShard(client, streamName, shard.ShardId, c.StringSlice("pattern"), c.Bool("trim-horizon"))
 	}
 
 	ch := make(chan bool)
@@ -50,11 +50,15 @@ func kinesisPrintRecords(c *cli.Context) error {
 	return nil
 }
 
-func searchInShard(client *kinesis.Kinesis, streamName string, shardId *string, patterns []string) {
+func searchInShard(client *kinesis.Kinesis, streamName string, shardId *string, patterns []string, trimHorizon bool) {
+	shardIteratorType := "LATEST"
+	if trimHorizon {
+		shardIteratorType = "TRIM_HORIZON"
+	}
 	itOut, err := client.GetShardIterator(&kinesis.GetShardIteratorInput{
 		StreamName:        aws.String(streamName),
 		ShardId:           shardId,
-		ShardIteratorType: aws.String("LATEST"),
+		ShardIteratorType: aws.String(shardIteratorType),
 	})
 	if err != nil {
 		log.Fatalln("ERROR", err)

@@ -13,7 +13,7 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Name = "awstools"
-	app.Version = "0.9.2"
+	app.Version = "0.9.3"
 	app.Usage = "AWS tools"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
@@ -110,6 +110,10 @@ func main() {
 				cli.StringFlag{
 					Name:  "search-stream, s",
 					Usage: "search `STREAM`",
+				},
+				cli.BoolFlag{
+					Name:  "trim-horizon",
+					Usage: "Search from the last untrimmed record in the shards",
 				},
 				cli.StringSliceFlag{
 					Name:  "pattern, p",
