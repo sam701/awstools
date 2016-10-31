@@ -18,9 +18,11 @@ To install `awstools` choose the binary for your architecture (either OSX or Lin
 
 ### OSX
 
+On Mac you can use Homebrew to install the binary:
+
 ```sh
-$ curl -o awstools -SsL https://github.com/sam701/awstools/releases/download/0.9.3/awstools_darwin_amd64
-$ chmod +x awstools
+$ brew tap sam701/awstools
+$ brew install awstools
 ```
 
 ### Linux
