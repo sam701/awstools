@@ -39,24 +39,15 @@ export GOPATH=$HOME/goprojects
 export PATH=$PATH:$GOPATH/bin
 ```
 
+Install [glide](https://glide.sh).
+
 Install `awstools`:
 ```sh
-go get -u github.com/sam701/awstools
+go get -d -u github.com/sam701/awstools
+cd $GOPATH/src/github.com/sam701/awstools
+glide install
+go install
 ```
-
-Add to your .bash_profile
-```sh
-aws_assume(){
-	tmpFile=/tmp/assume.tmp
-	awstools assume --export $tmpFile $@ && source $tmpFile
-	rm $tmpFile
-}
-```
-Now in order to assume a role on a subaccount, you can run something like this
-```sh
-aws_assume AccountName MyRoleOnSubAccount
-```
-
 
 ## Configuration
 The default path to the configuration file is `$HOME/.config/awstools/config.toml`.
@@ -81,6 +72,20 @@ prod = "000000000003"
 
 * `profiles` section contains profile names that will be saved in `$HOME/.aws/credentials`.
 * `accounts` section contains account ids and its names.
+
+Add to your .bash_profile
+```sh
+aws_assume(){
+	tmpFile=/tmp/assume.tmp
+	awstools assume --export $tmpFile $@ && source $tmpFile
+	rm $tmpFile
+}
+```
+Now in order to assume a role on a subaccount, you can run something like this
+```sh
+aws_assume AccountName MyRoleOnSubAccount
+```
+
 
 # License
 
