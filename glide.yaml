@@ -1,0 +1,20 @@
+package: github.com/sam701/awstools
+import:
+- package: github.com/aws/aws-sdk-go
+  version: ^1.5.10
+  subpackages:
+  - aws
+  - aws/credentials
+  - aws/session
+  - service/cloudformation
+  - service/cloudwatchlogs
+  - service/ec2
+  - service/iam
+  - service/kinesis
+  - service/kms
+  - service/sts
+- package: github.com/aybabtme/rgbterm
+- package: github.com/naoina/toml
+  version: ^0.1.0
+- package: github.com/urfave/cli
+  version: ^1.19.1
