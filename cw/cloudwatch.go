@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
 	"github.com/aybabtme/rgbterm"
 	"github.com/sam701/awstools/sess"
@@ -100,22 +101,30 @@ func grabInGroup(groupName string, filter *filter) {
 	if filter.pattern != "" {
 		params.FilterPattern = aws.String(filter.pattern)
 	}
-	err := client.FilterLogEventsPages(params, func(out *cloudwatchlogs.FilterLogEventsOutput, lastPage bool) bool {
-		fmt.Print(".")
-		for _, event := range out.Events {
-			msg := *event.Message
-			if filter.pattern != "" {
-				msg = strings.Replace(msg, filter.pattern, rgbterm.FgString(filter.pattern, 255, 100, 100), -1)
-			}
+	for {
+		err := client.FilterLogEventsPages(params, func(out *cloudwatchlogs.FilterLogEventsOutput, lastPage bool) bool {
+			fmt.Print(".")
+			params.NextToken = out.NextToken
 
-			fmt.Printf("%s %s",
-				rgbterm.FgString(toTimeString(event.Timestamp), 130, 255, 130),
-				msg)
+			for _, event := range out.Events {
+				msg := *event.Message
+				if filter.pattern != "" {
+					msg = strings.Replace(msg, filter.pattern, rgbterm.FgString(filter.pattern, 255, 100, 100), -1)
+				}
+
+				fmt.Printf("%s %s",
+					rgbterm.FgString(toTimeString(event.Timestamp), 130, 255, 130),
+					msg)
+			}
+			return true
+		})
+		if err == nil {
+			break
+		} else if e, ok := err.(awserr.Error); ok {
+			if e.Code() != "ThrottlingException" {
+				log.Fatalln("ERROR", err)
+			}
 		}
-		return true
-	})
-	if err != nil {
-		log.Fatalln("ERROR", err)
 	}
 }
 
