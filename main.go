@@ -7,6 +7,7 @@ import (
 	"github.com/sam701/awstools/cf"
 	"github.com/sam701/awstools/config"
 	"github.com/sam701/awstools/cw"
+	"github.com/sam701/tcolor"
 	"github.com/urfave/cli"
 )
 
@@ -19,6 +20,10 @@ func main() {
 		cli.StringFlag{
 			Name:  "config, c",
 			Usage: "path to config.toml file (default: ~/.config/awstools/config.toml)",
+		},
+		cli.BoolFlag{
+			Name:  "no-color",
+			Usage: "turn off color output",
 		},
 	}
 	app.Commands = []cli.Command{
@@ -155,6 +160,7 @@ func main() {
 	}
 	app.Before = func(c *cli.Context) error {
 		config.Read(c.String("config"))
+		tcolor.ColorOn = !c.GlobalBool("no-color")
 		return nil
 	}
 	app.Run(os.Args)
