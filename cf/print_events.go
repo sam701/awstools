@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"github.com/aybabtme/rgbterm"
+	"github.com/sam701/tcolor"
 )
 
 func printStackEvents(stackName *string) {
@@ -25,7 +25,7 @@ func printStackEvents(stackName *string) {
 		if len(events) > seenCount {
 			for _, event := range events[seenCount:] {
 				fmt.Printf("%s %s %s\n%s%-40s %s\n",
-					rgbterm.FgString(event.Timestamp.Format(time.RFC3339), 255, 255, 255),
+					tcolor.Colorize(event.Timestamp.Format(time.RFC3339), tcolor.New().Foreground(tcolor.BrightWhite)),
 					statusColor(fmt.Sprintf("%-20s", *event.ResourceStatus)),
 					awsToString(event.ResourceType),
 					strings.Repeat(" ", 21),
@@ -41,17 +41,18 @@ func printStackEvents(stackName *string) {
 }
 
 func statusColor(status string) string {
+	var c = tcolor.White
 	if strings.Contains(status, "IN_PROGRESS") {
-		return rgbterm.FgString(status, 255, 255, 130)
+		c = tcolor.BrightYellow
 	} else if strings.Contains(status, "_COMPLETE") {
-		return rgbterm.FgString(status, 130, 255, 130)
+		c = tcolor.BrightGreen
 	} else if strings.Contains(status, "_DELETED") {
-		return rgbterm.FgString(status, 255, 255, 130)
+		c = tcolor.BrightYellow
 	} else if strings.Contains(status, "_FAILED") {
-		return rgbterm.FgString(status, 255, 130, 130)
+		c = tcolor.BrightRed
 	}
 
-	return status
+	return tcolor.Colorize(status, tcolor.New().Foreground(c))
 }
 
 var haveSuccessfulEventRetrieval = false

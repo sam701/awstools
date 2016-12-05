@@ -6,8 +6,8 @@ import (
 	"os"
 	"path"
 
-	"github.com/aybabtme/rgbterm"
 	"github.com/naoina/toml"
+	"github.com/sam701/tcolor"
 )
 
 var Current *Configuration
@@ -51,7 +51,11 @@ func Read(filePath string) {
 func checkDeprecatedValues() {
 	if Current.AutoRotateMainAccountKey {
 		fmt.Println()
-		fmt.Println(rgbterm.FgString("autoRotateMainAccountKey in your config.toml is deprecated, use keyRotationIntervalMinutes instead", 255, 130, 130))
+		fmt.Println(
+			tcolor.Colorize("WARNING:", tcolor.New().Foreground(tcolor.BrightRed).Bold()),
+			tcolor.Colorize("autoRotateMainAccountKey", tcolor.New().Foreground(tcolor.Red).Underline()),
+			tcolor.Colorize("in your config.toml is deprecated, use keyRotationIntervalMinutes instead", tcolor.New().Foreground(tcolor.Red)),
+		)
 		fmt.Println()
 	}
 }

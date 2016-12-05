@@ -7,9 +7,10 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/kms"
-	"github.com/aybabtme/rgbterm"
+	"github.com/sam701/awstools/colors"
 	"github.com/sam701/awstools/config"
 	"github.com/sam701/awstools/sess"
+	"github.com/sam701/tcolor"
 	"github.com/urfave/cli"
 )
 
@@ -85,8 +86,8 @@ func listKmsKeys() {
 
 		md := res.KeyMetadata
 
-		fmt.Println(rgbterm.FgString(*md.Arn, 100, 255, 100))
-		fmt.Println(formatProp("Alias"), rgbterm.FgString(*v.AliasName, 255, 100, 100))
+		fmt.Println(tcolor.Colorize(*md.Arn, tcolor.New().Foreground(tcolor.BrightGreen)))
+		fmt.Println(formatProp("Alias"), tcolor.Colorize(*v.AliasName, tcolor.New().Foreground(tcolor.BrightRed)))
 		fmt.Println(formatProp("Description"), *md.Description)
 		fmt.Println(formatProp("Created"), *md.CreationDate)
 		fmt.Println(formatProp("Enabled"), *md.Enabled)
@@ -96,5 +97,5 @@ func listKmsKeys() {
 }
 
 func formatProp(prop string) string {
-	return rgbterm.FgString("  "+prop+":", 150, 150, 255)
+	return colors.Property(fmt.Sprintf("  %-15s", prop+":"))
 }

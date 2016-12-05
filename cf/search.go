@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"github.com/aybabtme/rgbterm"
+	"github.com/sam701/tcolor"
 )
 
 func searchStack(pattern string) {
@@ -23,8 +23,8 @@ func searchStack(pattern string) {
 
 func formatStack(stack *cloudformation.Stack) {
 	fmt.Printf("%s %s\n",
-		rgbterm.FgString(fmt.Sprintf("%-30s", *stack.StackName), 255, 255, 255),
-		rgbterm.FgString(*stack.StackStatus, 130, 255, 130))
+		tcolor.Colorize(fmt.Sprintf("%-30s", *stack.StackName), tcolor.New().Foreground(tcolor.BrightWhite).Bold()),
+		tcolor.Colorize(*stack.StackStatus, tcolor.New().Foreground(tcolor.BrightGreen)))
 	fmt.Println("  Parameters:")
 	for _, par := range stack.Parameters {
 		fmt.Printf("    %-35s %s\n", *par.ParameterKey, *par.ParameterValue)

@@ -1,8 +1,8 @@
-hash: 7aaa67ec8200b18156481cee931602f0f3a79b7bcf8d4a9e04fa02f6091ed083
-updated: 2016-11-24T21:37:25.343231231+01:00
+hash: ce9e8efb176e8c036cd97177ff8f85cbc8214aa458634f0b003b8275e2247364
+updated: 2016-12-05T22:50:51.908468246+01:00
 imports:
 - name: github.com/aws/aws-sdk-go
-  version: 4a6ff995f57ee4f8994db17ae83f01a9c9cc2274
+  version: 918c42e2bcdb277aa821401c906e88254501bdf4
   subpackages:
   - aws
   - aws/awserr
@@ -36,8 +36,6 @@ imports:
   - service/kinesis
   - service/kms
   - service/sts
-- name: github.com/aybabtme/rgbterm
-  version: c9a1bdb3761d262af7109d6463977046dafde36e
 - name: github.com/go-ini/ini
   version: 2ba15ac2dc9cdf88c110ec2dc0ced7fa45f5678c
 - name: github.com/jmespath/go-jmespath
@@ -48,6 +46,8 @@ imports:
   version: 751171607256bb66e64c9f0220c00662420c38e9
   subpackages:
   - ast
+- name: github.com/sam701/tcolor
+  version: 4b08e99c77555081f64e5ed5d4135f2ffeee0fd0
 - name: github.com/urfave/cli
   version: 0bdeddeeb0f650497d603c4ad7b20cfe685682f6
 testImports: []

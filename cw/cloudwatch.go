@@ -10,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/cloudwatchlogs"
-	"github.com/aybabtme/rgbterm"
+	"github.com/sam701/awstools/colors"
 	"github.com/sam701/awstools/sess"
 	"github.com/urfave/cli"
 )
@@ -109,11 +109,11 @@ func grabInGroup(groupName string, filter *filter) {
 			for _, event := range out.Events {
 				msg := *event.Message
 				if filter.pattern != "" {
-					msg = strings.Replace(msg, filter.pattern, rgbterm.FgString(filter.pattern, 255, 100, 100), -1)
+					msg = strings.Replace(msg, filter.pattern, colors.Match(filter.pattern), -1)
 				}
 
 				fmt.Printf("%s %s",
-					rgbterm.FgString(toTimeString(event.Timestamp), 130, 255, 130),
+					colors.Timestamp(toTimeString(event.Timestamp)),
 					msg)
 			}
 			return true

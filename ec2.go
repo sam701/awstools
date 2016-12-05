@@ -8,8 +8,9 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ec2"
-	"github.com/aybabtme/rgbterm"
+	"github.com/sam701/awstools/colors"
 	"github.com/sam701/awstools/sess"
+	"github.com/sam701/tcolor"
 	"github.com/urfave/cli"
 )
 
@@ -39,21 +40,22 @@ func printInstanceStatus(searchPattern string) {
 		log.Fatalln("ERROR:", err)
 	}
 
-	fmt.Println(rgbterm.FgString("Instances:", 255, 255, 255))
+	fmt.Println(tcolor.Colorize("Instances",
+		tcolor.New().Foreground(tcolor.BrightWhite).Bold().Underline()))
 	for _, r := range res.Reservations {
 		for _, in := range r.Instances {
 
-			var iid string
+			var idColor tcolor.Color
 			if *in.State.Name == "running" {
-				iid = rgbterm.FgString(*in.InstanceId, 130, 255, 130)
+				idColor = tcolor.New().Bold().Foreground(tcolor.BrightGreen)
 			} else {
-				iid = rgbterm.FgString(*in.InstanceId, 255, 80, 80)
+				idColor = tcolor.New().Bold().Foreground(tcolor.BrightRed)
 			}
 			fmt.Println(
-				iid,
+				tcolor.Colorize(*in.InstanceId, idColor),
 				in.LaunchTime.Format("2006-01-02 15:04"),
-				*in.InstanceType,
-				rgbterm.FgString(flattenString(in.PrivateIpAddress), 80, 80, 255),
+				tcolor.Colorize(*in.InstanceType, tcolor.New().Foreground(tcolor.Yellow).Italic()),
+				tcolor.Colorize(flattenString(in.PrivateIpAddress), tcolor.New().Foreground(tcolor.BrightBlue)),
 			)
 			printTags(in, searchPattern)
 			fmt.Println()
@@ -62,8 +64,10 @@ func printInstanceStatus(searchPattern string) {
 }
 func printTags(instance *ec2.Instance, searchPattern string) {
 	for _, tag := range sortedEc2Tags(instance) {
-		val := strings.Replace(*tag.Value, searchPattern, rgbterm.FgString(searchPattern, 190, 80, 80), -1)
-		fmt.Printf("  %-30s %s\n", *tag.Key+":", val)
+		val := strings.Replace(*tag.Value, searchPattern, colors.Match(searchPattern), -1)
+		fmt.Printf("  %s %s\n",
+			colors.Property(fmt.Sprintf("%-30s", *tag.Key+":")),
+			val)
 	}
 }
 

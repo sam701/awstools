@@ -8,7 +8,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/kinesis"
-	"github.com/aybabtme/rgbterm"
+	"github.com/sam701/awstools/colors"
 	"github.com/sam701/awstools/sess"
 	"github.com/urfave/cli"
 )
@@ -102,14 +102,14 @@ func searchInShard(client *kinesis.Kinesis, streamName string, shardId *string, 
 
 func printKinesisEvent(record *kinesis.Record, patterns []string) {
 	tt := record.ApproximateArrivalTimestamp.Format(time.RFC3339)
-	tt = rgbterm.FgString(tt, 100, 255, 100)
+	tt = colors.Timestamp(tt)
 	fmt.Print(tt + " ")
 	str := strings.TrimSpace(string(record.Data))
 	if len(patterns) == 0 {
 		fmt.Println(str)
 	} else {
 		for _, pat := range patterns {
-			str = strings.Replace(str, pat, rgbterm.FgString(pat, 255, 100, 100), -1)
+			str = strings.Replace(str, pat, colors.Match(pat), -1)
 		}
 		fmt.Println(str)
 	}
