@@ -124,6 +124,10 @@ func main() {
 					Name:  "pattern, p",
 					Usage: "search for (case sensitive) `PATTERN`",
 				},
+				cli.BoolFlag{
+					Name:  "no-timestamp",
+					Usage: "do not print record timestamps",
+				},
 			},
 			Action: kinesisPrintRecords,
 		},

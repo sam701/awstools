@@ -41,7 +41,11 @@ func kinesisPrintRecords(c *cli.Context) error {
 	}
 
 	for _, shard := range dsr.StreamDescription.Shards {
-		go searchInShard(client, streamName, shard.ShardId, c.StringSlice("pattern"), c.Bool("trim-horizon"))
+		go searchInShard(client, streamName, shard.ShardId,
+			c.StringSlice("pattern"),
+			c.Bool("trim-horizon"),
+			!c.Bool("no-timestamp"),
+		)
 	}
 
 	ch := make(chan bool)
@@ -50,7 +54,14 @@ func kinesisPrintRecords(c *cli.Context) error {
 	return nil
 }
 
-func searchInShard(client *kinesis.Kinesis, streamName string, shardId *string, patterns []string, trimHorizon bool) {
+func searchInShard(
+	client *kinesis.Kinesis,
+	streamName string,
+	shardId *string,
+	patterns []string,
+	trimHorizon bool,
+	printTimestamp bool) {
+
 	shardIteratorType := "LATEST"
 	if trimHorizon {
 		shardIteratorType = "TRIM_HORIZON"
@@ -80,7 +91,7 @@ func searchInShard(client *kinesis.Kinesis, streamName string, shardId *string, 
 
 		for _, record := range rOut.Records {
 			if len(patterns) == 0 {
-				printKinesisEvent(record, patterns)
+				printKinesisEvent(record, patterns, printTimestamp)
 			} else {
 				str := string(record.Data)
 				matched := true
@@ -91,7 +102,7 @@ func searchInShard(client *kinesis.Kinesis, streamName string, shardId *string, 
 					}
 				}
 				if matched {
-					printKinesisEvent(record, patterns)
+					printKinesisEvent(record, patterns, printTimestamp)
 				}
 			}
 		}
@@ -100,10 +111,12 @@ func searchInShard(client *kinesis.Kinesis, streamName string, shardId *string, 
 	}
 }
 
-func printKinesisEvent(record *kinesis.Record, patterns []string) {
-	tt := record.ApproximateArrivalTimestamp.Format(time.RFC3339)
-	tt = colors.Timestamp(tt)
-	fmt.Print(tt + " ")
+func printKinesisEvent(record *kinesis.Record, patterns []string, printTimestamp bool) {
+	if printTimestamp {
+		tt := record.ApproximateArrivalTimestamp.Format(time.RFC3339)
+		tt = colors.Timestamp(tt)
+		fmt.Print(tt + " ")
+	}
 	str := strings.TrimSpace(string(record.Data))
 	if len(patterns) == 0 {
 		fmt.Println(str)
