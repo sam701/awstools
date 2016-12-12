@@ -158,6 +158,10 @@ func main() {
 					Usage: "end `TIME` to grab",
 					Value: "now",
 				},
+				cli.IntFlag{
+					Name:  "duration",
+					Usage: "duration in seconds",
+				},
 			},
 			Action: cw.CloudwatchAction,
 		},

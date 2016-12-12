@@ -22,11 +22,17 @@ func CloudwatchAction(c *cli.Context) error {
 	if c.Bool("list-groups") {
 		listGroups()
 	} else if group := c.String("group"); group != "" {
-		grabInGroup(group, &filter{
+		filter := &filter{
 			pattern: c.String("pattern"),
 			start:   parseTimeBoundary(c.String("start")),
-			end:     parseTimeBoundary(c.String("end")),
-		})
+		}
+		durationSeconds := c.Int("duration")
+		if durationSeconds > 0 {
+			filter.end = filter.start.Add(time.Duration(durationSeconds) * time.Second)
+		} else {
+			filter.end = parseTimeBoundary(c.String("end"))
+		}
+		grabInGroup(group, filter)
 
 	} else {
 		cli.ShowCommandHelp(c, "cloudwatch")
