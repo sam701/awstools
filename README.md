@@ -12,7 +12,7 @@
 
 ## Install
 
-[We provide binaries for all releases through GitHub](https://github.com/sam701/awstools/releases). The latest release is [0.9.3](https://github.com/sam701/awstools/releases/latest).
+[We provide binaries for all releases through GitHub](https://github.com/sam701/awstools/releases). The latest release is [0.10.0](https://github.com/sam701/awstools/releases/latest).
 
 To install `awstools` choose the binary for your architecture (either OSX or Linux), run a download and use `chmod` to make it executable.
 
@@ -28,7 +28,7 @@ $ brew install awstools
 ### Linux
 
 ```sh
-$ curl -o awstools -SsL https://github.com/sam701/awstools/releases/download/0.9.3/awstools_linux_amd64
+$ curl -o awstools -SsL https://github.com/sam701/awstools/releases/download/0.10.0/awstools_linux_amd64
 $ chmod +x awstools
 ```
 

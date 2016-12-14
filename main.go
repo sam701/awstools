@@ -14,7 +14,7 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Name = "awstools"
-	app.Version = "0.9.3"
+	app.Version = "0.10.0"
 	app.Usage = "AWS tools"
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
