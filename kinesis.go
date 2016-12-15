@@ -40,11 +40,15 @@ func kinesisPrintRecords(c *cli.Context) error {
 		log.Fatalln("ERROR", err)
 	}
 
+	eventsChan := make(chan *eventToPrint)
+	go printEvents(eventsChan)
+
 	for _, shard := range dsr.StreamDescription.Shards {
 		go searchInShard(client, streamName, shard.ShardId,
 			c.StringSlice("pattern"),
 			c.Bool("trim-horizon"),
 			!c.Bool("no-timestamp"),
+			eventsChan,
 		)
 	}
 
@@ -60,7 +64,8 @@ func searchInShard(
 	shardId *string,
 	patterns []string,
 	trimHorizon bool,
-	printTimestamp bool) {
+	printTimestamp bool,
+	eventsToPrint chan<- *eventToPrint) {
 
 	shardIteratorType := "LATEST"
 	if trimHorizon {
@@ -91,7 +96,7 @@ func searchInShard(
 
 		for _, record := range rOut.Records {
 			if len(patterns) == 0 {
-				printKinesisEvent(record, patterns, printTimestamp)
+				eventsToPrint <- &eventToPrint{record, patterns, printTimestamp}
 			} else {
 				str := string(record.Data)
 				matched := true
@@ -102,7 +107,7 @@ func searchInShard(
 					}
 				}
 				if matched {
-					printKinesisEvent(record, patterns, printTimestamp)
+					eventsToPrint <- &eventToPrint{record, patterns, printTimestamp}
 				}
 			}
 		}
@@ -111,19 +116,28 @@ func searchInShard(
 	}
 }
 
-func printKinesisEvent(record *kinesis.Record, patterns []string, printTimestamp bool) {
-	if printTimestamp {
-		tt := record.ApproximateArrivalTimestamp.Format(time.RFC3339)
-		tt = colors.Timestamp(tt)
-		fmt.Print(tt + " ")
-	}
-	str := strings.TrimSpace(string(record.Data))
-	if len(patterns) == 0 {
-		fmt.Println(str)
-	} else {
-		for _, pat := range patterns {
-			str = strings.Replace(str, pat, colors.Match(pat), -1)
+type eventToPrint struct {
+	record         *kinesis.Record
+	patterns       []string
+	printTimestamp bool
+}
+
+func printEvents(events <-chan *eventToPrint) {
+	for event := range events {
+
+		if event.printTimestamp {
+			tt := event.record.ApproximateArrivalTimestamp.Format(time.RFC3339)
+			tt = colors.Timestamp(tt)
+			fmt.Print(tt + " ")
 		}
-		fmt.Println(str)
+		str := strings.TrimSpace(string(event.record.Data))
+		if len(event.patterns) == 0 {
+			fmt.Println(str)
+		} else {
+			for _, pat := range event.patterns {
+				str = strings.Replace(str, pat, colors.Match(pat), -1)
+			}
+			fmt.Println(str)
+		}
 	}
 }
