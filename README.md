@@ -73,13 +73,21 @@ prod = "000000000003"
 * `profiles` section contains profile names that will be saved in `$HOME/.aws/credentials`.
 * `accounts` section contains account ids and its names.
 
-Add to your .bash_profile
+Add to your `.bash_profile`
 ```sh
 aws_assume(){
 	tmpFile=/tmp/assume.tmp
 	awstools assume --export $tmpFile $@ && source $tmpFile
 	rm $tmpFile
 }
+```
+or to your `~/.config/fish/config.fish`
+```sh
+function aws_assume
+	set tmp /tmp/aws_assume.tmp
+	awstools assume --export $tmp $argv; and source $tmp
+	rm $tmp
+end
 ```
 Now in order to assume a role on a subaccount, you can run something like this
 ```sh
