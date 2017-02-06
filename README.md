@@ -94,6 +94,28 @@ Now in order to assume a role on a subaccount, you can run something like this
 aws_assume AccountName MyRoleOnSubAccount
 ```
 
+### Required IAM permissions
+
+#### AssumeRole
+
+For assuming a role in another account `awstools` needs the following permissions:
+
+- `iam:GetUser`
+- `iam:ListAccessKeys`
+
+*Note: `awstools` is using the MFA authenticated sessions for operations on your AWS access key.*
+
+#### Access Key Rotation
+
+For rotating access keys on the relevant account `awstools` needs the following permissions:
+
+- `iam:GetUser`
+- `iam:CreateAccessKey`
+- `iam:DeleteAccessKey`
+- `iam:ListAccessKeys`
+- `iam:UpdateAccessKey`
+
+*Note: `awstools` is using the MFA authenticated sessions for operations on your AWS access key.*
 
 # License
 
