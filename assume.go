@@ -48,16 +48,16 @@ func assumeRole(account, role string) {
 	role = adjustRoleName(role)
 
 	err := tryToAssumeRole(account, role)
-	if err != nil {
-		needToBeRotatedChan := make(chan bool)
-		go isNeedRotateKey(needToBeRotatedChan)
 
+	if err != nil {
 		getMainAccountMfaSessionToken()
 		err = tryToAssumeRole(account, role)
 		if err != nil {
 			log.Fatalln(err)
 		}
 
+		needToBeRotatedChan := make(chan bool)
+		go isNeedRotateKey(needToBeRotatedChan)
 		if <-needToBeRotatedChan {
 			rotateMainAccountKey()
 		}
@@ -65,7 +65,7 @@ func assumeRole(account, role string) {
 }
 
 func isNeedRotateKey(needToBeRotated chan<- bool) {
-	session := sess.New(config.Current.Profiles.MainAccount)
+	session := sess.New(config.Current.Profiles.MainAccountMfaSession)
 	cl := iam.New(session)
 
 	keyId := cred.GetMainAccountKeyId(config.Current.Profiles.MainAccount)
