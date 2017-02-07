@@ -14,12 +14,12 @@ import (
 )
 
 func rotateMainAccountKeyAction(*cli.Context) error {
-	rotateMainAccountKey()
+	client := iam.New(sess.New(config.Current.Profiles.MainAccount))
+	rotateMainAccountKey(client)
 	return nil
 }
 
-func rotateMainAccountKey() {
-	client := iam.New(sess.New(config.Current.Profiles.MainAccount))
+func rotateMainAccountKey(client *iam.IAM) {
 	key, err := client.CreateAccessKey(&iam.CreateAccessKeyInput{
 		UserName: aws.String(getUserName()),
 	})
