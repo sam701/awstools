@@ -83,9 +83,6 @@ func needRotateKey() bool {
 		log.Fatalln("Cannot get creation time for key", keyId)
 	}
 
-	log.Println("Interval:", config.Current.KeyRotationIntervalMinutes)
-	log.Println("Lifetime:", int(time.Now().Sub(creationTime).Minutes()))
-
 	return int(time.Now().Sub(creationTime).Minutes()) >= config.Current.KeyRotationIntervalMinutes
 }
 
