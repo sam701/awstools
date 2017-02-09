@@ -49,8 +49,6 @@ func assumeRole(account, role string) {
 
 	err := tryToAssumeRole(account, role)
 	if err != nil {
-		needToBeRotatedChan := make(chan bool)
-		go isNeedRotateKey(needToBeRotatedChan)
 
 		getMainAccountMfaSessionToken()
 		err = tryToAssumeRole(account, role)
@@ -58,14 +56,14 @@ func assumeRole(account, role string) {
 			log.Fatalln(err)
 		}
 
-		if <-needToBeRotatedChan {
-			rotateMainAccountKey()
+		if needRotateKey() {
+			rotateMainAccountKey(iam.New(sess.New(config.Current.Profiles.MainAccountMfaSession)))
 		}
 	}
 }
 
-func isNeedRotateKey(needToBeRotated chan<- bool) {
-	session := sess.New(config.Current.Profiles.MainAccount)
+func needRotateKey() bool {
+	session := sess.New(config.Current.Profiles.MainAccountMfaSession)
 	cl := iam.New(session)
 
 	keyId := cred.GetMainAccountKeyId(config.Current.Profiles.MainAccount)
@@ -85,7 +83,7 @@ func isNeedRotateKey(needToBeRotated chan<- bool) {
 		log.Fatalln("Cannot get creation time for key", keyId)
 	}
 
-	needToBeRotated <- int(time.Now().Sub(creationTime).Minutes()) >= config.Current.KeyRotationIntervalMinutes
+	return int(time.Now().Sub(creationTime).Minutes()) >= config.Current.KeyRotationIntervalMinutes
 }
 
 func adjustAccountName(account string) string {
