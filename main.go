@@ -7,6 +7,7 @@ import (
 	"github.com/sam701/awstools/cf"
 	"github.com/sam701/awstools/config"
 	"github.com/sam701/awstools/cw"
+	"github.com/sam701/awstools/ddb"
 	"github.com/sam701/tcolor"
 	"github.com/urfave/cli"
 )
@@ -75,6 +76,18 @@ func main() {
 			ShortName: "r",
 			Usage:     "create a new access key for main account and delete the current one",
 			Action:    rotateMainAccountKeyAction,
+		},
+		{
+			Name:      "dynamodb",
+			ShortName: "ddb",
+			Usage:     "dynamodb commands",
+			Subcommands: []cli.Command{
+				{
+					Name:   "list",
+					Usage:  "list tables",
+					Action: ddb.List,
+				},
+			},
 		},
 		{
 			Name:      "kms",
