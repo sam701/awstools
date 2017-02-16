@@ -168,7 +168,10 @@ func main() {
 	}
 	app.Before = func(c *cli.Context) error {
 		config.Read(c.String("config"))
-		tcolor.ColorOn = !c.GlobalBool("no-color")
+
+		if c.GlobalBool("no-color") {
+			tcolor.ColorOn = false
+		}
 		return nil
 	}
 	app.Run(os.Args)
