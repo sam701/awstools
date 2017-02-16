@@ -1,8 +1,8 @@
 hash: ce9e8efb176e8c036cd97177ff8f85cbc8214aa458634f0b003b8275e2247364
-updated: 2016-12-05T22:50:51.908468246+01:00
+updated: 2017-02-16T22:37:40.992197323+01:00
 imports:
 - name: github.com/aws/aws-sdk-go
-  version: 918c42e2bcdb277aa821401c906e88254501bdf4
+  version: 7f96ce6d3bc37ec42c97a3f8d19209a134838042
   subpackages:
   - aws
   - aws/awserr
@@ -16,10 +16,10 @@ imports:
   - aws/credentials/stscreds
   - aws/defaults
   - aws/ec2metadata
+  - aws/endpoints
   - aws/request
   - aws/session
   - aws/signer/v4
-  - private/endpoints
   - private/protocol
   - private/protocol/ec2query
   - private/protocol/json/jsonutil
@@ -47,7 +47,15 @@ imports:
   subpackages:
   - ast
 - name: github.com/sam701/tcolor
-  version: 4b08e99c77555081f64e5ed5d4135f2ffeee0fd0
+  version: 16f8bd6111055d20299395fb094b409b540f9deb
 - name: github.com/urfave/cli
   version: 0bdeddeeb0f650497d603c4ad7b20cfe685682f6
+- name: golang.org/x/crypto
+  version: ede567c8e044a5913dad1d1af3696d9da953104c
+  subpackages:
+  - ssh/terminal
+- name: golang.org/x/sys
+  version: 30237cf4eefd639b184d1f2cb77a581ea0be8947
+  subpackages:
+  - unix
 testImports: []
