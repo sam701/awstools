@@ -87,6 +87,13 @@ func main() {
 					Usage:  "list tables",
 					Action: ddb.List,
 				},
+				{
+					Name:      "describe",
+					ShortName: "desc",
+					ArgsUsage: "<table name>",
+					Usage:     "describe table",
+					Action:    ddb.DescribeTable,
+				},
 			},
 		},
 		{
