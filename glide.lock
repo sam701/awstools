@@ -1,8 +1,8 @@
-hash: ce9e8efb176e8c036cd97177ff8f85cbc8214aa458634f0b003b8275e2247364
-updated: 2017-02-16T22:37:40.992197323+01:00
+hash: 10a89f68a5a8a0d22b0ed585d4a06e6c98888523ce9535e26372a3fa59436008
+updated: 2017-02-17T12:54:34.360202157+01:00
 imports:
 - name: github.com/aws/aws-sdk-go
-  version: 7f96ce6d3bc37ec42c97a3f8d19209a134838042
+  version: f844700ba2a387dfee7ab3679e7544b5dbd6d394
   subpackages:
   - aws
   - aws/awserr
@@ -31,11 +31,14 @@ imports:
   - private/waiter
   - service/cloudformation
   - service/cloudwatchlogs
+  - service/dynamodb
   - service/ec2
   - service/iam
   - service/kinesis
   - service/kms
   - service/sts
+- name: github.com/dustin/go-humanize
+  version: 7a41df006ff9af79a29f0ffa9c5f21fbe6314a2d
 - name: github.com/go-ini/ini
   version: 2ba15ac2dc9cdf88c110ec2dc0ced7fa45f5678c
 - name: github.com/jmespath/go-jmespath
