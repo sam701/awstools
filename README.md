@@ -1,18 +1,38 @@
 # awstools
 [![Build Status](https://travis-ci.org/sam701/awstools.svg?branch=master)](https://travis-ci.org/sam701/awstools) A few helpful AWS tools.
 
-## Tools
-* `assume` - assumes a role on a subaccount behind the main account where you have an access key
-* `ec2` - searches EC2 instances by pattern
-* `rotate-main-account-key` - rotates the main account key
-* `cloudformation` - prints stacks parameters and outputs, deletes stacks
-* `kms` - decrypts base64 encoded text or encrypts and encodes with base64
-* `kinesis` - lists streams, grabs kinesis stream for patterns
-* `cloudwatch` - searches cloudwatch logs
+```
+NAME:
+   awstools - AWS tools
+
+USAGE:
+   awstools [global options] command [command options] [arguments...]
+
+VERSION:
+   0.11.0
+
+COMMANDS:
+     assume                      assume role on a specified account
+     accounts                    print known accounts
+     ec2                         print EC2 instances and ELBs
+     cloudformation, cf          print CloudFormation stacks information
+     rotate-main-account-key, r  create a new access key for main account and delete the current one
+     dynamodb, ddb               dynamodb commands
+     kms                         encrypt/decrypt text
+     kinesis                     print records from kinesis streams
+     cloudwatch, cw              search in cloudwatch logs
+     help, h                     Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --config value, -c value  path to config.toml file (default: ~/.config/awstools/config.toml)
+   --no-color                turn off color output
+   --help, -h                show help
+   --version, -v             print the version
+```
 
 ## Install
 
-[We provide binaries for all releases through GitHub](https://github.com/sam701/awstools/releases). The latest release is [0.10.1](https://github.com/sam701/awstools/releases/latest).
+[We provide binaries for all releases through GitHub](https://github.com/sam701/awstools/releases). The latest release is [0.11.0](https://github.com/sam701/awstools/releases/latest).
 
 To install `awstools` choose the binary for your architecture (either OSX or Linux), run a download and use `chmod` to make it executable.
 
@@ -28,7 +48,7 @@ $ brew install awstools
 ### Linux
 
 ```sh
-$ curl -o awstools -SsL https://github.com/sam701/awstools/releases/download/0.10.1/awstools_linux_amd64
+$ curl -o awstools -SsL https://github.com/sam701/awstools/releases/download/0.11.0/awstools_linux_amd64
 $ chmod +x awstools
 ```
 
