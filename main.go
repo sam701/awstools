@@ -113,6 +113,22 @@ func main() {
 					},
 					Action: ddb.GetItem,
 				},
+				{
+					Name:  "scan",
+					Usage: "return first rows",
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "table, t",
+							Usage: "table name",
+						},
+						cli.IntFlag{
+							Name:  "row-limit, l",
+							Usage: "maximum rows to print",
+							Value: 20,
+						},
+					},
+					Action: ddb.ScanTable,
+				},
 			},
 		},
 		{
