@@ -19,7 +19,7 @@ import (
 
 func DescribeTable(ctx *cli.Context) error {
 	if !ctx.Args().Present() {
-		cli.ShowCommandHelp(ctx, "describe")
+		cli.ShowSubcommandHelp(ctx)
 		return nil
 	}
 

@@ -94,6 +94,25 @@ func main() {
 					Usage:     "describe table",
 					Action:    ddb.DescribeTable,
 				},
+				{
+					Name:  "get",
+					Usage: "get item",
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "table, t",
+							Usage: "table name",
+						},
+						cli.StringFlag{
+							Name:  "hash-key, k",
+							Usage: "hash key of the item",
+						},
+						cli.StringFlag{
+							Name:  "range-key, r",
+							Usage: "range key of the item",
+						},
+					},
+					Action: ddb.GetItem,
+				},
 			},
 		},
 		{
