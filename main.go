@@ -90,9 +90,14 @@ func main() {
 				{
 					Name:      "describe",
 					ShortName: "desc",
-					ArgsUsage: "<table name>",
 					Usage:     "describe table",
-					Action:    ddb.DescribeTable,
+					Flags: []cli.Flag{
+						cli.StringFlag{
+							Name:  "table, t",
+							Usage: "table name",
+						},
+					},
+					Action: ddb.DescribeTable,
 				},
 				{
 					Name:  "get",

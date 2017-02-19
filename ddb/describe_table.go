@@ -18,12 +18,12 @@ import (
 )
 
 func DescribeTable(ctx *cli.Context) error {
-	if !ctx.Args().Present() {
+	tableName := ctx.String("table")
+	if tableName == "" {
 		cli.ShowSubcommandHelp(ctx)
 		return nil
 	}
 
-	tableName := ctx.Args().First()
 	c := client()
 	out, err := c.DescribeTable(&dynamodb.DescribeTableInput{
 		TableName: aws.String(tableName),
