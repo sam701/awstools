@@ -1,6 +1,7 @@
 package ddb
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -32,6 +33,7 @@ func ScanTable(ctx *cli.Context) error {
 			break
 		}
 		printItem(item, kd)
+		fmt.Println()
 	}
 
 	return nil
