@@ -1,12 +1,10 @@
-package main
+package assume
 
 import (
 	"bufio"
 	"fmt"
-	"io"
 	"log"
 	"os"
-	"path"
 	"strings"
 	"time"
 
@@ -20,9 +18,9 @@ import (
 	"github.com/urfave/cli"
 )
 
-var scriptOutput io.Writer = os.Stdout
+var exportProfile = false
 
-func actionAssumeRole(c *cli.Context) error {
+func AssumeRole(c *cli.Context) error {
 	if len(c.Args()) == 2 {
 		var account, role string
 		account = c.Args().Get(0)
@@ -36,6 +34,7 @@ func actionAssumeRole(c *cli.Context) error {
 			defer f.Close()
 			scriptOutput = f
 		}
+		exportProfile = c.Bool("export-profile")
 		assumeRole(account, role)
 	} else {
 		cli.ShowCommandHelp(c, "assume")
@@ -174,28 +173,14 @@ func tryToAssumeRole(accountName, role string) error {
 
 	profile := fmt.Sprintf("%s %s", accountName, role)
 	persistSharedCredentials(assumeData.Credentials, profile)
-	printExport(assumeData.Credentials)
+	if exportProfile {
+		printExportProfile(profile)
+	} else {
+		printExportKeyAndToken(assumeData.Credentials)
+	}
 
 	cred.SetProfileRegion(profile, config.Current.DefaultRegion)
 	return nil
-}
-
-func printExport(cred *sts.Credentials) {
-	shell := path.Base(os.Getenv("SHELL"))
-	var pattern string
-	if shell == "fish" {
-		pattern = "set -xg %s \"%s\"\n"
-	} else {
-		pattern = "export %s=\"%s\"\n"
-	}
-
-	exp := func(key, value string) {
-		fmt.Fprintf(scriptOutput, pattern, key, value)
-	}
-
-	exp("AWS_ACCESS_KEY_ID", *cred.AccessKeyId)
-	exp("AWS_SECRET_ACCESS_KEY", *cred.SecretAccessKey)
-	exp("AWS_SESSION_TOKEN", *cred.SessionToken)
 }
 
 func persistSharedCredentials(c *sts.Credentials, profile string) {

@@ -1,4 +1,4 @@
-package main
+package assume
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 	"github.com/urfave/cli"
 )
 
-func rotateMainAccountKeyAction(*cli.Context) error {
+func RotateMainAccountKeyAction(*cli.Context) error {
 	client := iam.New(sess.New(config.Current.Profiles.MainAccount))
 	rotateMainAccountKey(client)
 	return nil

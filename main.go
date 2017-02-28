@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/sam701/awstools/assume"
 	"github.com/sam701/awstools/cf"
 	"github.com/sam701/awstools/config"
 	"github.com/sam701/awstools/cw"
@@ -37,8 +38,12 @@ func main() {
 					Name:  "export, e",
 					Usage: "export shell script to `PATH`",
 				},
+				cli.BoolFlag{
+					Name:  "export-profile, p",
+					Usage: "export AWS_PROFILE instead of AWS_SECRET_ACCESS_KEY and AWS_SESSION_TOKEN",
+				},
 			},
-			Action: actionAssumeRole,
+			Action: assume.AssumeRole,
 		},
 		{
 			Name:   "accounts",
@@ -75,7 +80,7 @@ func main() {
 			Name:      "rotate-main-account-key",
 			ShortName: "r",
 			Usage:     "create a new access key for main account and delete the current one",
-			Action:    rotateMainAccountKeyAction,
+			Action:    assume.RotateMainAccountKeyAction,
 		},
 		{
 			Name:      "dynamodb",
