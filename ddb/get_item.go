@@ -64,7 +64,8 @@ func (i itemType) getStringValue(key string) *fieldValue {
 
 func printItem(item itemType, kd *keyDesc) {
 	if len(item) == 0 {
-		fmt.Println("No such item")
+		fmt.Println(tcolor.Colorize("Item not found", tcolor.New().Foreground(tcolor.BrightRed)))
+		return
 	}
 
 	maxFieldNameSize := 0
