@@ -45,10 +45,16 @@ func DescribeTable(ctx *cli.Context) error {
 		"Key Schema", keySchemaString(desc),
 		"Provisioned Read", humanize.Comma(*desc.ProvisionedThroughput.ReadCapacityUnits),
 		"Provisioned Write", humanize.Comma(*desc.ProvisionedThroughput.WriteCapacityUnits),
-		"Last Increase", desc.ProvisionedThroughput.LastIncreaseDateTime.Format(time.RFC3339),
-		"Last Decrease", desc.ProvisionedThroughput.LastDecreaseDateTime.Format(time.RFC3339),
 		"Decreases Today", strconv.Itoa(int(*desc.ProvisionedThroughput.NumberOfDecreasesToday)),
 	)
+
+	if desc.ProvisionedThroughput.LastIncreaseDateTime != nil {
+		printProperties("Last Increase", desc.ProvisionedThroughput.LastIncreaseDateTime.Format(time.RFC3339))
+	}
+
+	if desc.ProvisionedThroughput.LastDecreaseDateTime != nil {
+		printProperties("Last Decrease", desc.ProvisionedThroughput.LastDecreaseDateTime.Format(time.RFC3339))
+	}
 
 	return nil
 }
