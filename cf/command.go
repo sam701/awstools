@@ -38,7 +38,7 @@ func Command() cli.Command {
 						Usage: "list only stacks with the given `KEY:VALUE`, can be specified multiple times",
 					},
 					cli.StringSliceFlag{
-						Name:  "resource-type",
+						Name:  "resource-type, r",
 						Usage: "print only resources of the specified `TYPE`. Can be specified multiple times. Example AWS::Lambda::Function. Implies --print-resources",
 					},
 					cli.BoolFlag{

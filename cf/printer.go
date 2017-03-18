@@ -2,6 +2,7 @@ package cf
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/service/cloudformation"
@@ -16,6 +17,8 @@ type stackPrintOptions struct {
 	printOutputs    bool
 	printResources  bool
 	printTags       bool
+
+	resourceTypes []string
 }
 
 func createPrintOptions(ctx *cli.Context) *stackPrintOptions {
@@ -24,16 +27,24 @@ func createPrintOptions(ctx *cli.Context) *stackPrintOptions {
 		printOutputs:    ctx.Bool("print-outputs"),
 		printTags:       ctx.Bool("print-tags"),
 		printResources:  ctx.Bool("print-resources"),
+
+		resourceTypes: ctx.StringSlice("resource-type"),
 	}
 }
 
 var (
 	colorStack        = tcolor.New().Foreground(tcolor.BrightWhite).Bold()
+	colorStackRef     = tcolor.New().Foreground(tcolor.Cyan).Italic()
 	colorSection      = tcolor.New().Foreground(tcolor.Yellow).Underline()
 	colorResourceType = tcolor.New().Foreground(tcolor.Magenta)
 )
 
 func printStacks(stacks []*cloudformation.Stack, options *stackPrintOptions) {
+	if len(options.resourceTypes) > 0 {
+		printResourceTypes(stacks, options.resourceTypes)
+		return
+	}
+
 	for i, stack := range stacks {
 		fmt.Println(tcolor.Colorize(*stack.StackName, colorStack))
 
@@ -86,4 +97,40 @@ func printStacks(stacks []*cloudformation.Stack, options *stackPrintOptions) {
 func printStackResource(indent int, resource *cloudformation.StackResourceSummary) {
 	fmt.Print(strings.Repeat(" ", indent))
 	fmt.Println(*resource.PhysicalResourceId)
+}
+
+func printResourceTypes(stacks []*cloudformation.Stack, resourceTypes []string) {
+	type resource struct {
+		summary   *cloudformation.StackResourceSummary
+		stackName string
+	}
+	res := []*resource{}
+
+	for _, stack := range stacks {
+		r := getStackResources(*stack.StackName, resourceTypes)
+		for _, rs := range r {
+			res = append(res, &resource{rs, *stack.StackName})
+		}
+	}
+
+	sort.Slice(res, func(a, b int) bool {
+		ra := *res[a].summary.ResourceType
+		rb := *res[b].summary.ResourceType
+		if ra == rb {
+			return *res[a].summary.PhysicalResourceId < *res[b].summary.PhysicalResourceId
+		}
+		return ra < rb
+	})
+
+	lastType := ""
+	for _, r := range res {
+		if lastType != *r.summary.ResourceType {
+			fmt.Println(tcolor.Colorize(*r.summary.ResourceType, colorResourceType))
+		}
+		fmt.Printf("  %s (%s)\n", *r.summary.PhysicalResourceId,
+			tcolor.Colorize(r.stackName, colorStackRef))
+
+		lastType = *r.summary.ResourceType
+	}
+
 }
