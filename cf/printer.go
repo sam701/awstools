@@ -2,12 +2,13 @@ package cf
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/service/cloudformation"
-	"github.com/sam701/tcolor"
+	"github.com/urfave/cli"
 
 	"github.com/sam701/awstools/printer"
-	"github.com/urfave/cli"
+	"github.com/sam701/tcolor"
 )
 
 type stackPrintOptions struct {
@@ -27,12 +28,13 @@ func createPrintOptions(ctx *cli.Context) *stackPrintOptions {
 }
 
 var (
-	colorStack   = tcolor.New().Foreground(tcolor.BrightWhite).Bold()
-	colorSection = tcolor.New().Foreground(tcolor.Yellow).Underline()
+	colorStack        = tcolor.New().Foreground(tcolor.BrightWhite).Bold()
+	colorSection      = tcolor.New().Foreground(tcolor.Yellow).Underline()
+	colorResourceType = tcolor.New().Foreground(tcolor.Magenta)
 )
 
 func printStacks(stacks []*cloudformation.Stack, options *stackPrintOptions) {
-	for _, stack := range stacks {
+	for i, stack := range stacks {
 		fmt.Println(tcolor.Colorize(*stack.StackName, colorStack))
 
 		if options.printTags {
@@ -61,5 +63,27 @@ func printStacks(stacks []*cloudformation.Stack, options *stackPrintOptions) {
 			}
 			printer.PrintProperties(4, pairs...)
 		}
+
+		if options.printResources {
+			fmt.Println(" ", tcolor.Colorize("Resources", colorSection))
+			res := getStackResources(*stack.StackName, []string{})
+			lastType := ""
+			for _, r := range res {
+				if lastType != *r.ResourceType {
+					fmt.Println("   ", tcolor.Colorize(*r.ResourceType, colorResourceType))
+				}
+				printStackResource(6, r)
+				lastType = *r.ResourceType
+			}
+		}
+
+		if i < len(stacks)-1 {
+			fmt.Println("")
+		}
 	}
+}
+
+func printStackResource(indent int, resource *cloudformation.StackResourceSummary) {
+	fmt.Print(strings.Repeat(" ", indent))
+	fmt.Println(*resource.PhysicalResourceId)
 }
