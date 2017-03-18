@@ -6,11 +6,23 @@ import (
 	"strings"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/cloudformation"
 	"github.com/sam701/tcolor"
+	"github.com/urfave/cli"
 )
 
-func printStackEvents(stackName *string) {
+func printStackEventsCommand(ctx *cli.Context) error {
+	stackName := ctx.Args().First()
+	if stackName == "" {
+		cli.ShowSubcommandHelp(ctx)
+	} else {
+		printStackEvents(stackName)
+	}
+	return nil
+}
+
+func printStackEvents(stackName string) {
 	seenCount := 0
 	readingEvents := true
 	for {
@@ -57,13 +69,13 @@ func statusColor(status string) string {
 
 var haveSuccessfulEventRetrieval = false
 
-func readStackEvents(stackName *string) []*cloudformation.StackEvent {
+func readStackEvents(stackName string) []*cloudformation.StackEvent {
 	var token *string = nil
 	events := make([]*cloudformation.StackEvent, 0, 32)
 	for {
 		out, err := cfClient.DescribeStackEvents(&cloudformation.DescribeStackEventsInput{
 			NextToken: token,
-			StackName: stackName,
+			StackName: aws.String(stackName),
 		})
 		if err != nil {
 			if haveSuccessfulEventRetrieval {

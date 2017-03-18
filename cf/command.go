@@ -9,21 +9,10 @@ func Command() cli.Command {
 		Name:      "cloudformation",
 		ShortName: "cf",
 		Usage:     "print CloudFormation stacks information",
-		Flags: []cli.Flag{
-			cli.StringFlag{
-				Name:  "events, e",
-				Usage: "print events of `STACK`",
-			},
-			cli.StringFlag{
-				Name:  "delete",
-				Usage: "delete `STACK`",
-			},
-		},
-		Action: handleCloudformation,
 		Subcommands: []cli.Command{
 			{
 				Name:  "list",
-				Usage: "list stacks",
+				Usage: "list stacks and their resources",
 				Flags: []cli.Flag{
 					cli.StringFlag{
 						Name:  "name",
@@ -59,6 +48,18 @@ func Command() cli.Command {
 					},
 				},
 				Action: listStacks,
+			},
+			{
+				Name:      "events",
+				Usage:     "print events of a stack",
+				ArgsUsage: "STACK",
+				Action:    printStackEventsCommand,
+			},
+			{
+				Name:      "delete",
+				Usage:     "delete stack",
+				ArgsUsage: "STACK",
+				Action:    deleteStack,
 			},
 		},
 	}
