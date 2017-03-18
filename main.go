@@ -56,26 +56,7 @@ func main() {
 			ArgsUsage: "<EC2 instance tag substring>",
 			Action:    actionDescribeEC2,
 		},
-		{
-			Name:      "cloudformation",
-			ShortName: "cf",
-			Usage:     "print CloudFormation stacks information",
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "search, s",
-					Usage: "search for `SUBSTRING` in stack names",
-				},
-				cli.StringFlag{
-					Name:  "events, e",
-					Usage: "print events of `STACK`",
-				},
-				cli.StringFlag{
-					Name:  "delete",
-					Usage: "delete `STACK`",
-				},
-			},
-			Action: cf.HandleCloudformation,
-		},
+		cf.Command(),
 		{
 			Name:      "rotate-main-account-key",
 			ShortName: "r",

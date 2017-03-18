@@ -9,11 +9,9 @@ import (
 
 var cfClient *cloudformation.CloudFormation
 
-func HandleCloudformation(c *cli.Context) error {
+func handleCloudformation(c *cli.Context) error {
 	cfClient = cloudformation.New(sess.FromEnvVar())
-	if searchPattern := c.String("search"); searchPattern != "" {
-		searchStack(searchPattern)
-	} else if stackToDelete := c.String("delete"); stackToDelete != "" {
+	if stackToDelete := c.String("delete"); stackToDelete != "" {
 		deleteStack(stackToDelete)
 	} else if eventsStackName := c.String("events"); eventsStackName != "" {
 		printStackEvents(aws.String(eventsStackName))
