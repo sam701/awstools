@@ -89,7 +89,9 @@ func printStacks(stacks []*cloudformation.Stack, options *stackPrintOptions) {
 		}
 
 		if i < len(stacks)-1 {
-			fmt.Println("")
+			if options.printOutputs || options.printParameters || options.printTags || options.printResources {
+				fmt.Println("")
+			}
 		}
 	}
 }
