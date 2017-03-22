@@ -3,10 +3,8 @@ package ddb
 import (
 	"fmt"
 	"log"
-
-	"strings"
-
 	"sort"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -29,15 +27,35 @@ func GetItem(ctx *cli.Context) error {
 
 	kd := describeTableKey(table, c)
 
-	out, err := c.GetItem(&dynamodb.GetItemInput{
-		TableName: aws.String(table),
-		Key:       createKey(kd, hashKey, rangeKey),
-	})
-	if err != nil {
-		log.Fatalln("ERROR", err)
-	}
+	if kd.rangeKey != nil && rangeKey == "" {
+		out, err := c.Query(&dynamodb.QueryInput{
+			TableName:              aws.String(table),
+			KeyConditionExpression: aws.String("#kk = :vv"),
+			ExpressionAttributeNames: map[string]*string{
+				"#kk": aws.String(kd.hashKey.keyName),
+			},
+			ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+				":vv": createAttributeValue(hashKey, kd.hashKey.keyValueType),
+			},
+		})
+		if err != nil {
+			log.Fatalln("ERROR", err)
+		}
 
-	printItem(out.Item, kd)
+		for _, item := range out.Items {
+			printItem(item, kd)
+		}
+	} else {
+		out, err := c.GetItem(&dynamodb.GetItemInput{
+			TableName: aws.String(table),
+			Key:       createKey(kd, hashKey, rangeKey),
+		})
+		if err != nil {
+			log.Fatalln("ERROR", err)
+		}
+
+		printItem(out.Item, kd)
+	}
 
 	return nil
 }
@@ -167,14 +185,20 @@ func describeTableKey(tableName string, c *dynamodb.DynamoDB) *keyDesc {
 		hashKey: &fieldDesc{},
 	}
 
-	for i, sch := range out.Table.KeySchema {
+	keyTypes := map[string]string{}
+
+	for _, kd := range out.Table.AttributeDefinitions {
+		keyTypes[*kd.AttributeName] = *kd.AttributeType
+	}
+
+	for _, sch := range out.Table.KeySchema {
 		if *sch.KeyType == "HASH" {
 			kd.hashKey.keyName = *sch.AttributeName
-			kd.hashKey.keyValueType = *out.Table.AttributeDefinitions[i].AttributeType
+			kd.hashKey.keyValueType = keyTypes[*sch.AttributeName]
 		} else {
 			kd.rangeKey = &fieldDesc{
 				keyName:      *sch.AttributeName,
-				keyValueType: *out.Table.AttributeDefinitions[i].AttributeType,
+				keyValueType: keyTypes[*sch.AttributeName],
 			}
 		}
 	}
