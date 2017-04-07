@@ -63,65 +63,7 @@ func main() {
 			Usage:     "create a new access key for main account and delete the current one",
 			Action:    assume.RotateMainAccountKeyAction,
 		},
-		{
-			Name:      "dynamodb",
-			ShortName: "ddb",
-			Usage:     "dynamodb commands",
-			Subcommands: []cli.Command{
-				{
-					Name:   "list",
-					Usage:  "list tables",
-					Action: ddb.List,
-				},
-				{
-					Name:      "describe",
-					ShortName: "desc",
-					Usage:     "describe table",
-					Flags: []cli.Flag{
-						cli.StringFlag{
-							Name:  "table, t",
-							Usage: "table name",
-						},
-					},
-					Action: ddb.DescribeTable,
-				},
-				{
-					Name:  "get",
-					Usage: "get item",
-					Flags: []cli.Flag{
-						cli.StringFlag{
-							Name:  "table, t",
-							Usage: "table name",
-						},
-						cli.StringFlag{
-							Name:  "hash-key, k",
-							Usage: "hash key of the item",
-						},
-						cli.StringFlag{
-							Name:  "range-key, r",
-							Usage: "range key of the item",
-						},
-					},
-					Action: ddb.GetItem,
-				},
-				{
-					Name:  "scan",
-					Usage: "return first rows",
-					Flags: []cli.Flag{
-						cli.StringFlag{
-							Name:  "table, t",
-							Usage: "table name",
-						},
-						cli.IntFlag{
-							Name:  "row-limit, l",
-							Usage: "maximum rows to print",
-							Value: 20,
-						},
-					},
-					Action: ddb.ScanTable,
-				},
-			},
-		},
+		ddb.Command(),
 		{
 			Name:      "kms",
 			Usage:     "encrypt/decrypt text",
