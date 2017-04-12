@@ -17,6 +17,7 @@ func GetItem(ctx *cli.Context) error {
 	table := ctx.String("table")
 	hashKey := ctx.String("hash-key")
 	rangeKey := ctx.String("range-key")
+	jsonOutput := ctx.Bool("json-output")
 
 	if table == "" || hashKey == "" {
 		cli.ShowSubcommandHelp(ctx)
@@ -43,7 +44,11 @@ func GetItem(ctx *cli.Context) error {
 		}
 
 		for _, item := range out.Items {
-			printItem(item, kd)
+			if jsonOutput {
+				printItemAsJson(item)
+			} else {
+				printItem(item, kd)
+			}
 		}
 	} else {
 		out, err := c.GetItem(&dynamodb.GetItemInput{
@@ -54,7 +59,11 @@ func GetItem(ctx *cli.Context) error {
 			log.Fatalln("ERROR", err)
 		}
 
-		printItem(out.Item, kd)
+		if jsonOutput {
+			printItemAsJson(out.Item)
+		} else {
+			printItem(out.Item, kd)
+		}
 	}
 
 	return nil

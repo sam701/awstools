@@ -43,6 +43,10 @@ func Command() cli.Command {
 						Name:  "range-key, r",
 						Usage: "range key of the item",
 					},
+					cli.BoolFlag{
+						Name:  "json-output, j",
+						Usage: "output lines as JSON",
+					},
 				},
 				Action: GetItem,
 			},
