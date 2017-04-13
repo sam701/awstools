@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -50,11 +51,16 @@ func printItemAsJson(item map[string]*dynamodb.AttributeValue) {
 	values := map[string]interface{}{}
 
 	for k, v := range item {
-		val := v.S
-		if val == nil {
-			val = v.N
+		if v.S != nil {
+			values[k] = *v.S
+		} else if v.N != nil {
+			c, err := strconv.Atoi(*v.N)
+			if err != nil {
+				log.Fatalln("ERROR", err)
+			}
+
+			values[k] = c
 		}
-		values[k] = *val
 	}
 
 	err := json.NewEncoder(os.Stdout).Encode(values)
