@@ -114,11 +114,12 @@ func grabInGroup(groupName string, filter *filter) {
 
 			for _, event := range out.Events {
 				msg := *event.Message
+				msg = strings.TrimRight(msg, "\n")
 				if filter.pattern != "" {
 					msg = strings.Replace(msg, filter.pattern, colors.Match(filter.pattern), -1)
 				}
 
-				fmt.Printf("%s %s",
+				fmt.Printf("%s %s\n",
 					colors.Timestamp(toTimeString(event.Timestamp)),
 					msg)
 			}
