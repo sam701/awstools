@@ -80,6 +80,9 @@ defaultKmsKey = "arn:aws:kms:eu-west-1:000000000001:key/00000000-1111-1111-2222-
 # Rotate the main account access key every week
 keyRotationIntervalMinutes = 10080
 
+# Reuse current credentials, if they are valid for at least 10 minutes.
+reuseCredentialsIfValidForMinutes = 10
+
 [profiles]
 mainAccount = "main_account"
 mainAccountMfaSession = "main_account_mfa_session"
