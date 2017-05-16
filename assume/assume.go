@@ -23,7 +23,7 @@ var (
 	reuseCredentialsIfValidForMinutes = 0
 )
 
-func AssumeRole(c *cli.Context) error {
+func assumeRoleAction(c *cli.Context) error {
 	if len(c.Args()) == 2 {
 		var account, role string
 		account = c.Args().Get(0)
