@@ -40,7 +40,11 @@ func main() {
 				},
 				cli.BoolFlag{
 					Name:  "export-profile, p",
-					Usage: "export AWS_PROFILE instead of AWS_SECRET_ACCESS_KEY and AWS_SESSION_TOKEN",
+					Usage: "export AWS_PROFILE instead of token variables (this will become default behavior later)",
+				},
+				cli.BoolFlag{
+					Name:  "export-token",
+					Usage: "export AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and AWS_SESSION_TOKEN variables (this is currently default behavior)",
 				},
 			},
 			Action: assume.AssumeRole,
