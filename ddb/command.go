@@ -51,6 +51,17 @@ func Command() cli.Command {
 				Action: GetItem,
 			},
 			{
+				Name:  "put",
+				Usage: "read JSON objects line by line from stdin and put them into DDB",
+				Flags: []cli.Flag{
+					cli.StringFlag{
+						Name:  "table, t",
+						Usage: "table name",
+					},
+				},
+				Action: putItem,
+			},
+			{
 				Name:  "delete",
 				Usage: "delete item",
 				Flags: []cli.Flag{
