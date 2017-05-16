@@ -9,7 +9,7 @@ USAGE:
    awstools [global options] command [command options] [arguments...]
 
 VERSION:
-   0.12.0
+   0.13.0
 
 COMMANDS:
      assume                      assume role on a specified account
@@ -32,7 +32,7 @@ GLOBAL OPTIONS:
 
 ## Install
 
-[We provide binaries for all releases through GitHub](https://github.com/sam701/awstools/releases). The latest release is [0.12.0](https://github.com/sam701/awstools/releases/latest).
+[We provide binaries for all releases through GitHub](https://github.com/sam701/awstools/releases). The latest release is [0.13.0](https://github.com/sam701/awstools/releases/latest).
 
 To install `awstools` choose the binary for your architecture (either OSX or Linux), run a download and use `chmod` to make it executable.
 
@@ -48,7 +48,7 @@ $ brew install awstools
 ### Linux
 
 ```sh
-$ curl -o awstools -SsL https://github.com/sam701/awstools/releases/download/0.12.0/awstools_linux_amd64
+$ curl -o awstools -SsL https://github.com/sam701/awstools/releases/download/0.13.0/awstools_linux_amd64
 $ chmod +x awstools
 ```
 
