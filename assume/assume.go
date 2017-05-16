@@ -180,6 +180,10 @@ func tryToAssumeRole(accountName, role string) error {
 	}
 
 	cred.SetProfileRegion(profile, config.Current.DefaultRegion)
+
+	if assumeData.Credentials.Expiration != nil {
+		saveProfileExpirationTimestamp(profile, *assumeData.Credentials.Expiration)
+	}
 	return nil
 }
 
