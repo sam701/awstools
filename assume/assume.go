@@ -159,6 +159,14 @@ func accountId(accountName string) string {
 }
 
 func tryToAssumeRole(accountName, role string) error {
+	profile := fmt.Sprintf("%s %s", accountName, role)
+	if readProfileExpirationTimestamp(profile).Sub(time.Now()).Minutes() > 15 {
+		if cr := cred.GetCredentials(profile); cr != nil {
+			printShellVariables(profile, cr)
+			return nil
+		}
+	}
+
 	session := sess.New(config.Current.Profiles.MainAccountMfaSession)
 	accountId := accountId(accountName)
 
@@ -171,13 +179,8 @@ func tryToAssumeRole(accountName, role string) error {
 		return err
 	}
 
-	profile := fmt.Sprintf("%s %s", accountName, role)
 	persistSharedCredentials(assumeData.Credentials, profile)
-	if exportProfile {
-		printExportProfile(profile)
-	} else {
-		printExportKeyAndToken(assumeData.Credentials)
-	}
+	printShellVariables(profile, assumeData.Credentials)
 
 	cred.SetProfileRegion(profile, config.Current.DefaultRegion)
 
