@@ -46,6 +46,10 @@ func main() {
 					Name:  "export-token",
 					Usage: "export AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY and AWS_SESSION_TOKEN variables (this is currently default behavior)",
 				},
+				cli.IntFlag{
+					Name:  "reuse-credentials",
+					Usage: "reuse current credentials if they are valid for at least `MINUTES`",
+				},
 			},
 			Action: assume.AssumeRole,
 		},

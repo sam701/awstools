@@ -18,7 +18,10 @@ import (
 	"github.com/urfave/cli"
 )
 
-var exportProfile = false
+var (
+	exportProfile                     = false
+	reuseCredentialsIfValidForMinutes = 0
+)
 
 func AssumeRole(c *cli.Context) error {
 	if len(c.Args()) == 2 {
@@ -35,6 +38,13 @@ func AssumeRole(c *cli.Context) error {
 			scriptOutput = f
 		}
 		exportProfile = c.Bool("export-profile")
+
+		reuseCredentialsIfValidForMinutes = config.Current.ReuseCredentialsIfValidForMinutes
+		reuseFromArgs := c.Int("reuse-credentials")
+		if reuseFromArgs > 0 {
+			reuseCredentialsIfValidForMinutes = reuseFromArgs
+		}
+
 		assumeRole(account, role)
 	} else {
 		cli.ShowCommandHelp(c, "assume")
@@ -160,7 +170,7 @@ func accountId(accountName string) string {
 
 func tryToAssumeRole(accountName, role string) error {
 	profile := fmt.Sprintf("%s %s", accountName, role)
-	if readProfileExpirationTimestamp(profile).Sub(time.Now()).Minutes() > 15 {
+	if int(readProfileExpirationTimestamp(profile).Sub(time.Now()).Minutes()) > reuseCredentialsIfValidForMinutes {
 		if cr := cred.GetCredentials(profile); cr != nil {
 			printShellVariables(profile, cr)
 			return nil
