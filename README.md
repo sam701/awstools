@@ -80,6 +80,9 @@ defaultKmsKey = "arn:aws:kms:eu-west-1:000000000001:key/00000000-1111-1111-2222-
 # Rotate the main account access key every week
 keyRotationIntervalMinutes = 10080
 
+# Reuse current credentials, if they are valid for at least 10 minutes.
+reuseCredentialsIfValidForMinutes = 10
+
 [profiles]
 mainAccount = "main_account"
 mainAccountMfaSession = "main_account_mfa_session"
@@ -97,7 +100,7 @@ Add to your `.bash_profile`
 ```sh
 aws_assume(){
 	tmpFile=/tmp/assume.tmp
-	awstools assume --export $tmpFile $@ && source $tmpFile
+	awstools assume --export $tmpFile --export-profile $@ && source $tmpFile
 	rm $tmpFile
 }
 ```
@@ -105,10 +108,13 @@ or to your `~/.config/fish/config.fish`
 ```sh
 function aws_assume
 	set tmp /tmp/aws_assume.tmp
-	awstools assume --export $tmp $argv; and source $tmp
+	awstools assume --export $tmp --export-profile $argv; and source $tmp
 	rm $tmp
 end
 ```
+`--export-profile` flag tells `awstools` to print only `AWS_PROFILE` instead of printing `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN` variables.
+This will become the default behavior later.
+
 Now in order to assume a role on a subaccount, you can run something like this
 ```sh
 aws_assume AccountName MyRoleOnSubAccount

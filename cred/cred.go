@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"path"
+
+	"github.com/aws/aws-sdk-go/service/sts"
 )
 
 func credentialsFilePath() string {
@@ -42,13 +44,7 @@ func newCredentialsGroup(profile, keyId, secret, token string) *propsGroup {
 }
 
 func GetMainAccountKeyId(profileName string) string {
-	f, err := os.Open(credentialsFilePath())
-	if err != nil {
-		log.Println(err)
-	}
-	defer f.Close()
-
-	cf := readPropsFile(f)
+	cf := readCredentials()
 	for _, g := range cf.groups {
 		if g.name == profileName {
 			for _, l := range g.lines {
@@ -60,4 +56,35 @@ func GetMainAccountKeyId(profileName string) string {
 	}
 	log.Fatalf("Credentials file does not contain profile '%s'\n", profileName)
 	return ""
+}
+
+func readCredentials() *propsFile {
+	f, err := os.Open(credentialsFilePath())
+	if err != nil {
+		log.Println(err)
+	}
+	defer f.Close()
+
+	return readPropsFile(f)
+}
+
+func GetCredentials(profileName string) *sts.Credentials {
+	cf := readCredentials()
+	for _, g := range cf.groups {
+		if g.name == profileName {
+			cr := &sts.Credentials{}
+			for _, n := range g.lines {
+				switch n.key {
+				case "aws_access_key_id":
+					cr.SetAccessKeyId(n.value)
+				case "aws_secret_access_key":
+					cr.SetSecretAccessKey(n.value)
+				case "aws_session_token":
+					cr.SetSessionToken(n.value)
+				}
+			}
+			return cr
+		}
+	}
+	return nil
 }

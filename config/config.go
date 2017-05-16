@@ -18,6 +18,8 @@ type Configuration struct {
 	AutoRotateMainAccountKey   bool // Deprecated: use KeyRotationIntervalMinutes
 	KeyRotationIntervalMinutes int
 
+	ReuseCredentialsIfValidForMinutes int
+
 	Profiles struct {
 		MainAccount           string
 		MainAccountMfaSession string
@@ -37,6 +39,7 @@ func Read(filePath string) {
 
 	var c Configuration
 	c.KeyRotationIntervalMinutes = 60 * 24 * 7 // 1 week
+	c.ReuseCredentialsIfValidForMinutes = 120  // turned off
 
 	err = toml.NewDecoder(f).Decode(&c)
 	if err != nil {

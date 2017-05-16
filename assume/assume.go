@@ -18,9 +18,12 @@ import (
 	"github.com/urfave/cli"
 )
 
-var exportProfile = false
+var (
+	exportProfile                     = false
+	reuseCredentialsIfValidForMinutes = 0
+)
 
-func AssumeRole(c *cli.Context) error {
+func assumeRoleAction(c *cli.Context) error {
 	if len(c.Args()) == 2 {
 		var account, role string
 		account = c.Args().Get(0)
@@ -35,6 +38,13 @@ func AssumeRole(c *cli.Context) error {
 			scriptOutput = f
 		}
 		exportProfile = c.Bool("export-profile")
+
+		reuseCredentialsIfValidForMinutes = config.Current.ReuseCredentialsIfValidForMinutes
+		reuseFromArgs := c.Int("reuse-credentials")
+		if reuseFromArgs > 0 {
+			reuseCredentialsIfValidForMinutes = reuseFromArgs
+		}
+
 		assumeRole(account, role)
 	} else {
 		cli.ShowCommandHelp(c, "assume")
@@ -159,6 +169,14 @@ func accountId(accountName string) string {
 }
 
 func tryToAssumeRole(accountName, role string) error {
+	profile := fmt.Sprintf("%s %s", accountName, role)
+	if int(readProfileExpirationTimestamp(profile).Sub(time.Now()).Minutes()) > reuseCredentialsIfValidForMinutes {
+		if cr := cred.GetCredentials(profile); cr != nil {
+			printShellVariables(profile, cr)
+			return nil
+		}
+	}
+
 	session := sess.New(config.Current.Profiles.MainAccountMfaSession)
 	accountId := accountId(accountName)
 
@@ -171,15 +189,14 @@ func tryToAssumeRole(accountName, role string) error {
 		return err
 	}
 
-	profile := fmt.Sprintf("%s %s", accountName, role)
 	persistSharedCredentials(assumeData.Credentials, profile)
-	if exportProfile {
-		printExportProfile(profile)
-	} else {
-		printExportKeyAndToken(assumeData.Credentials)
-	}
+	printShellVariables(profile, assumeData.Credentials)
 
 	cred.SetProfileRegion(profile, config.Current.DefaultRegion)
+
+	if assumeData.Credentials.Expiration != nil {
+		saveProfileExpirationTimestamp(profile, *assumeData.Credentials.Expiration)
+	}
 	return nil
 }
 

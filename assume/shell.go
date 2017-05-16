@@ -26,6 +26,14 @@ func printExport(key, value string) {
 	fmt.Fprintf(scriptOutput, exportPattern, key, value)
 }
 
+func printShellVariables(profileName string, credendials *sts.Credentials) {
+	if exportProfile {
+		printExportProfile(profileName)
+	} else {
+		printExportKeyAndToken(credendials)
+	}
+}
+
 func printExportProfile(profile string) {
 	printExport("AWS_PROFILE", profile)
 }
