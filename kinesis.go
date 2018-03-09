@@ -1,7 +1,11 @@
 package main
 
 import (
+	"bytes"
+	"compress/gzip"
+	"errors"
 	"fmt"
+	"io"
 	"log"
 	"strings"
 	"time"
@@ -31,6 +35,14 @@ func kinesisPrintRecords(c *cli.Context) error {
 		cli.ShowCommandHelp(c, "kinesis")
 		return nil
 	}
+	var atTimestamp *time.Time
+	if str := c.String("at-timestamp"); str != "" {
+		t, err := time.Parse(time.RFC3339, str)
+		if err != nil {
+			return errors.New("Cannot parse time " + err.Error())
+		}
+		atTimestamp = &t
+	}
 
 	dsr, err := client.DescribeStream(&kinesis.DescribeStreamInput{
 		StreamName: aws.String(streamName),
@@ -47,7 +59,9 @@ func kinesisPrintRecords(c *cli.Context) error {
 		go searchInShard(client, streamName, shard.ShardId,
 			c.StringSlice("pattern"),
 			c.Bool("trim-horizon"),
+			atTimestamp,
 			!c.Bool("no-timestamp"),
+			c.Bool("gunzip"),
 			eventsChan,
 		)
 	}
@@ -64,18 +78,23 @@ func searchInShard(
 	shardId *string,
 	patterns []string,
 	trimHorizon bool,
+	atTimestamp *time.Time,
 	printTimestamp bool,
+	gunzip bool,
 	eventsToPrint chan<- *eventToPrint) {
 
-	shardIteratorType := "LATEST"
-	if trimHorizon {
-		shardIteratorType = "TRIM_HORIZON"
+	siInput := &kinesis.GetShardIteratorInput{
+		StreamName: aws.String(streamName),
+		ShardId:    shardId,
 	}
-	itOut, err := client.GetShardIterator(&kinesis.GetShardIteratorInput{
-		StreamName:        aws.String(streamName),
-		ShardId:           shardId,
-		ShardIteratorType: aws.String(shardIteratorType),
-	})
+	siInput.ShardIteratorType = aws.String("LATEST")
+	if trimHorizon {
+		siInput.ShardIteratorType = aws.String("TRIM_HORIZON")
+	} else if atTimestamp != nil {
+		siInput.ShardIteratorType = aws.String("AT_TIMESTAMP")
+		siInput.Timestamp = atTimestamp
+	}
+	itOut, err := client.GetShardIterator(siInput)
 	if err != nil {
 		log.Fatalln("ERROR", err)
 	}
@@ -95,6 +114,22 @@ func searchInShard(
 		shardIterator = rOut.NextShardIterator
 
 		for _, record := range rOut.Records {
+			if gunzip {
+				r, err := gzip.NewReader(bytes.NewReader(record.Data))
+				if err != nil {
+					log.Println("Cannot unzip data", err, string(record.Data))
+					continue
+				}
+
+				var output bytes.Buffer
+				_, err = io.Copy(&output, r)
+				if err != nil {
+					log.Println("Cannot unzip data", err, string(record.Data))
+					continue
+				}
+				r.Close()
+				record.Data = output.Bytes()
+			}
 			if len(patterns) == 0 {
 				eventsToPrint <- &eventToPrint{record, patterns, printTimestamp}
 			} else {

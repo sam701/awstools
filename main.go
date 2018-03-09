@@ -89,6 +89,10 @@ func main() {
 					Name:  "search-stream, s",
 					Usage: "search `STREAM`",
 				},
+				cli.StringFlag{
+					Name:  "at-timestamp",
+					Usage: "start reading events from the specified `TIMESTAMP`",
+				},
 				cli.BoolFlag{
 					Name:  "trim-horizon",
 					Usage: "Search from the last untrimmed record in the shards",
@@ -100,6 +104,10 @@ func main() {
 				cli.BoolFlag{
 					Name:  "no-timestamp",
 					Usage: "do not print record timestamps",
+				},
+				cli.BoolFlag{
+					Name:  "gunzip",
+					Usage: "gunzip event content",
 				},
 			},
 			Action: kinesisPrintRecords,
