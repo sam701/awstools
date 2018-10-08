@@ -56,6 +56,7 @@ func printInstanceStatus(searchPattern string) {
 				in.LaunchTime.Format("2006-01-02 15:04"),
 				tcolor.Colorize(*in.InstanceType, tcolor.New().Foreground(tcolor.Yellow).Italic()),
 				tcolor.Colorize(flattenString(in.PrivateIpAddress), tcolor.New().Foreground(tcolor.BrightBlue)),
+				tcolor.Colorize(flattenString(in.PublicIpAddress), tcolor.New().Foreground(tcolor.Cyan)),
 			)
 			printTags(in, searchPattern)
 			fmt.Println()
