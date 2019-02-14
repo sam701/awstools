@@ -59,14 +59,9 @@ export GOPATH=$HOME/goprojects
 export PATH=$PATH:$GOPATH/bin
 ```
 
-Install [glide](https://glide.sh).
-
 Install `awstools`:
 ```sh
-go get -d -u github.com/sam701/awstools
-cd $GOPATH/src/github.com/sam701/awstools
-glide install
-go install
+go get -u github.com/sam701/awstools
 ```
 
 ## Configuration
