@@ -7,6 +7,7 @@ install:
   - go get github.com/mitchellh/gox
 
 script:
+  - go get
   - gox -os="darwin linux" -arch="amd64"
 
 deploy:
