@@ -22,7 +22,7 @@ func SaveCredentials(profile, keyId, secret, token string) {
 
 func SetProfileRegion(profile, region string) {
 	updatePropsGroup(configFilePath(), &propsGroup{
-		name: "profile " + profile,
+		name: "profile '" + profile + "'",
 		lines: []*propertyLine{
 			&propertyLine{"region", region},
 		},
