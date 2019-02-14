@@ -1,14 +1,12 @@
 language: go
 
 go:
-  - 1.11
+  - "1.11"
 
 install:
   - go get github.com/mitchellh/gox
-  - go get github.com/Masterminds/glide
 
 script:
-  - glide install
   - gox -os="darwin linux" -arch="amd64"
 
 deploy:
