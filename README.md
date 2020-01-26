@@ -30,6 +30,9 @@ GLOBAL OPTIONS:
    --version, -v             print the version
 ```
 
+## Note
+Consider also [awscredx](https://github.com/sam701/awscredx) if you are mostly interested in role assumption.
+
 ## Install
 
 [We provide binaries for all releases through GitHub](https://github.com/sam701/awstools/releases). The latest release is [0.13.2](https://github.com/sam701/awstools/releases/latest).
